@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsString } from 'class-validator'
 
 export class CreateJournalDto {
-  @IsNotEmpty()
-  @IsString()
   fileName: string
+
+  data: Uint8Array
 
   @IsNotEmpty()
   @IsString()
-  data: Uint8Array
+  address: string
 }
