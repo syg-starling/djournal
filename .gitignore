@@ -14,7 +14,7 @@ coverage/
 .idea/
 
 # Environment
-.env
+# .env
 
 #Hardhat files
 cache

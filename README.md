@@ -33,14 +33,14 @@ Make sure you have Postgres running in the system.
 Create a user for the project:
 
 ```
-CREATE USER starterapp WITH PASSWORD 'starterapp';
+CREATE USER starling WITH PASSWORD 'starling';
 ```
 
 Create the databases as needed. For example:
 
 ```
-CREATE DATABASE starterapp;
-GRANT ALL PRIVILEGES ON DATABASE starterapp to starterapp;
+CREATE DATABASE starling;
+GRANT ALL PRIVILEGES ON DATABASE starling to starling;
 ```
 
 ## Development
