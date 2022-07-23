@@ -20,9 +20,10 @@ const setupApp = (
 ) => {
   app.useLogger(app.get(Logger))
 
-  if (configService.get('CORS')) {
+  if (configService.get('CORS_ORIGIN')) {
     app.enableCors({
-      origin: '*',
+      origin: configService.get('CORS_ORIGIN'),
+      credentials: true,
       optionsSuccessStatus: 200,
     })
   }

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@starterapp/common": "../common"
+    "@starterapp/common": "../common",
+    "@starterapp/contract": "../contract"
   },
   "scripts": {
     "bootstrap": "../../scripts/bootstrap",

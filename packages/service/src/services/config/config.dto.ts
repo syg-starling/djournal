@@ -1,5 +1,5 @@
 import {
-  IsBoolean,
+  // IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -8,7 +8,7 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
-import { ToBoolean } from './config.decorator'
+// import { ToBoolean } from './config.decorator'
 import { Environment, LogLevel } from './config.enum'
 
 export class ConfigDto {
@@ -22,10 +22,9 @@ export class ConfigDto {
   @IsEnum(LogLevel)
   LOG_LEVEL: LogLevel
 
-  @ToBoolean()
   @IsOptional()
-  @IsBoolean()
-  CORS?: boolean
+  @IsString()
+  CORS_ORIGIN?: string
 
   @Type(() => Number)
   @IsNotEmpty()

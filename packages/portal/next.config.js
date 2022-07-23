@@ -1,5 +1,9 @@
 const webpack = require('webpack')
 
+const { TARGET } = process.env
+const ENV = process.env.NODE_ENV || 'development'
+const isDebug = ENV !== 'production'
+
 module.exports = {
   distDir: 'dist',
   swcMinify: true,
@@ -7,6 +11,10 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   webpack: (config) => {
+    config.plugins.push(new webpack.DefinePlugin({
+      'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
+      __ENV__: `'${TARGET || 'development'}'`,
+    }))
     config.plugins.push(new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
     }))

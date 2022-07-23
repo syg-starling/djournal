@@ -1,9 +1,20 @@
 import { NextPage } from 'next'
 import Head from 'next/head'
+import { useEffect } from 'react'
+
+import { useAppDispatch, useAppSelector } from '~/src/hooks'
+import { selectName, getPrice, selectPrice } from '~/src/reducers/userSlice'
 
 import styles from '~/src/styles/Home.module.css'
 
 const User: NextPage = () => {
+  const userName = useAppSelector(selectName)
+  const price = useAppSelector(selectPrice)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(getPrice())
+  }, [])
   return (
     <div className={styles.container}>
       <Head>
@@ -13,7 +24,9 @@ const User: NextPage = () => {
       </Head>
 
       <div>
-        User Page
+        User {userName}
+        <br />
+        Ethereum Price: {price}
       </div>
     </div>
   )

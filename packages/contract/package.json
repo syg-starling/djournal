@@ -1,0 +1,9 @@
+{
+  "name": "@starterapp/contract",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./*": "./*.js",
+    "./abi/*": "./abi/*"
+  }
+}

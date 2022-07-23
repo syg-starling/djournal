@@ -4,8 +4,12 @@ import Link from 'next/link'
 import { Button } from '@mui/material'
 
 import styles from '~/src/styles/Home.module.css'
+import * as svc from '../services'
 
 const Home: NextPage = () => {
+  const handleClick = () => {
+    svc.getUsers({})
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -17,6 +21,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <Button
           variant="contained"
+          onClick={handleClick}
         >
           Test
         </Button>

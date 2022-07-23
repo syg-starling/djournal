@@ -2,6 +2,9 @@
   "name": "@starterapp/portal",
   "version": "0.0.0",
   "private": true,
+  "dependencies": {
+    "@starterapp/contract": "../contract"
+  },
   "scripts": {
     "bootstrap": "../../scripts/bootstrap",
     "audit": "../../scripts/audit",

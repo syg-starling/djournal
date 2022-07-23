@@ -44,26 +44,7 @@ module.exports = {
     'import/no-named-as-default': 'off',
     'import/no-named-as-default-member': 'off',
     'import/no-anonymous-default-export': 'error',
-    'import/order': [
-      'error',
-      {
-        groups: [
-          'builtin',
-          'external',
-          'internal',
-          'parent',
-          'sibling',
-          'index',
-        ],
-        'newlines-between': 'always-and-inside-groups',
-        pathGroups: [
-          {
-            pattern: '~/**',
-            group: 'internal',
-          },
-        ],
-      },
-    ],
+    'import/order': 'off',
     'react/jsx-boolean-value': 'error',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
@@ -87,6 +68,7 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
     '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-member-access': "error",
     '@typescript-eslint/restrict-template-expressions': 'off',
   },
 
