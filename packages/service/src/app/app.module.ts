@@ -9,6 +9,7 @@ import { ConfigModule } from '~/src/services/config/config.module'
 import { ConfigService } from '~/src/services/config/config.service'
 
 import { UserModule } from './user/user.module'
+import { JournalModule } from './journal/journal.module'
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UserModule } from './user/user.module'
         configService.getPostgresConfig(),
     }),
     UserModule,
+    JournalModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
