@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
+import { CreateJournalDto } from './journal.dto'
 import { JournalService } from './journal.service'
 import { Journal } from './journal.entity'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -37,9 +38,10 @@ export class JournalController {
 
   @Post('/')
   @UseInterceptors(FileInterceptor('file'))
-  public async createJournal(@UploadedFile() file: any): Promise<Journal> {
+  public async createJournal(@UploadedFile() file: any, @Body() createJournalDto: CreateJournalDto): Promise<Journal> {
     //create smart contract for the bidding prior to journal creation
-    const journal = await this.journalService.createJournal({ fileName: file.originalName, data: file.buffer })
+    console.log(createJournalDto.authorId)
+    const journal = await this.journalService.createJournal({ fileName: file.originalName, data: file.buffer, authorId: createJournalDto.authorId })
     return journal
   }
 }
