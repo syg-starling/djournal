@@ -1,21 +1,14 @@
 import { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Button, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 
-import { useAppDispatch, useAppSelector } from '../hooks'
-import * as svc from '../services'
+import { useAppSelector } from '../hooks'
 import { RootState } from '../store'
 import styles from '~/src/styles/Home.module.css'
 
 const Home: NextPage = () => {
   const { account } = useAppSelector((state: RootState) => state.user)
-  const dispatch = useAppDispatch()
-
-  const handleClick = () => {
-    svc.getUsers({})
-  }
-
   return (
     <div className={styles.container}>
       <Head>
@@ -25,17 +18,24 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <Typography>
+        <Typography variant="h1">
+          DJournal: Decentralised Journal
+        </Typography>
+        <Typography variant="caption">
           Connected Wallet: {account}
         </Typography>
-        <Button
-          variant="contained"
-          onClick={handleClick}
-        >
-          Test
-        </Button>
-        <Link href="/users">User List</Link>
-        <Link href="/journals">Journal List</Link>
+        <div style={{ padding: '2rem', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ padding: '1rem', margin: '1rem', textAlign: 'center' }}>
+            <Link href="/users">
+              User List
+            </Link>
+          </div>
+          <div style={{ padding: '1rem', margin: '1rem', textAlign: 'center' }}>
+            <Link href="/journals">
+              Journal List
+            </Link>
+          </div>
+        </div>
       </main>
     </div>
   )
