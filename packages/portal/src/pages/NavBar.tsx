@@ -2,7 +2,10 @@ import { AppBar, Avatar, IconButton, Link, Menu, MenuItem, Toolbar, Tooltip, Typ
 import { useState } from "react"
 
 import { useRouter } from 'next/router'
-import { Container } from "@mui/system";
+import { Container } from "@mui/system"
+
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { RootState } from '../store'
 
 const NavLink = ({ children, href }: any) => {
   return (
@@ -82,7 +85,7 @@ const NavBar = () => {
         </Container>
       </Toolbar>
     </AppBar>
-  );
+  )
 }
 
 export default NavBar

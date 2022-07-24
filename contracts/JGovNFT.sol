@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Nolicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
@@ -30,11 +30,12 @@ contract JGovNFT is
     CountersUpgradeable.Counter private _tokenIdCounter;
     IRoles private rolesContract;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
     
-    function initialize(string memory name, string memory token, string memory version) public initializer {
+    function initialize(string memory name, string memory token, string memory version, address _rolesAddr) public initializer {
         __ERC721_init(name, token);
         __ERC721Enumerable_init();
         __ERC721URIStorage_init();
@@ -43,6 +44,8 @@ contract JGovNFT is
         __ERC721Burnable_init();
         __EIP712_init(name, version);
         __ERC721Votes_init();
+
+        rolesContract = IRoles(_rolesAddr);
     }
 
     function _baseURI() internal pure override returns (string memory) {
@@ -62,6 +65,11 @@ contract JGovNFT is
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+    }
+
+    function setContractRoles(address _addr) public onlyOwner {
+        require(rolesContract.isAdmin(_msgSender()), "401");
+        rolesContract = IRoles(_addr);
     }
 
     // The following functions are overrides required by Solidity.

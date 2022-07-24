@@ -3,7 +3,10 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const hre = require('hardhat')
+require('dotenv').config({ path: '../.env' })
+const { ethers, upgrades } = require('hardhat')
+
+const contractAddr = process.env.CONTRACT_JGOVNFT_ADDR
 
 async function main() {
   const [deployer] = await ethers.getSigners()
@@ -14,11 +17,13 @@ async function main() {
 
   if (deployerBalance === '0') return // deployment will fail
 
-  const TestToken = await ethers.getContractFactory('TestToken')
-  const token = await TestToken.deploy()
-  await token.deployed()
+  const JGovNFT = await ethers.getContractFactory('JGovNFT')
+  const upgradedContract = await upgrades.upgradeProxy(
+    contractAddr,
+    JGovNFT,
+  )
 
-  console.log('TestToken deployed to:', token.address)
+  console.log('contract upgraded addr:', upgradedContract.address)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

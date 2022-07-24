@@ -3,9 +3,11 @@ const Big = require('big.js')
 
 const testTokenABI = require('@starterapp/contract/abi/TestToken.json')
 const contractRolesABI = require('@starterapp/contract/abi/ContractRoles.json')
+const jgovnftABI = require('@starterapp/contract/abi/JGovNFT.json')
 
 const tokenAddr = process.env.NEXT_PUBLIC_TOKEN_ADDR
 const contractRolesAddr = process.env.NEXT_PUBLIC_CONTRACT_ROLES_ADDR
+const jgovnftAddr = process.env.NEXT_PUBLIC_JGOVNFT_ADDR
 
 let _web3
 if (typeof window !== "undefined") {
@@ -21,14 +23,17 @@ console.log('_web3', _web3)
 
 let _contractToken
 let _contractRoles
+let _contractJGovNFT
 if (_web3) {
   _contractToken = new _web3.eth.Contract(testTokenABI.abi, tokenAddr)
   _contractRoles = new _web3.eth.Contract(contractRolesABI.abi, contractRolesAddr)
+  _contractJGovNFT = new _web3.eth.Contract(jgovnftABI.abi, jgovnftAddr)
 }
 
 export const web3 = _web3
 export const contractToken = _contractToken
 export const contractRoles = _contractRoles
+export const contractJGovNFT = _contractJGovNFT
 
 export const WEI = new Big(10).pow(18)
 export const GAS_LIMIT = 345577
