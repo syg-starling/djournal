@@ -18,7 +18,7 @@ async function main() {
   const token = await JToken.deploy(
     "JToken", 
     "JTOK", 
-    1000000,
+    "100000000000000000000000000",
   )
   await token.deployed()
 

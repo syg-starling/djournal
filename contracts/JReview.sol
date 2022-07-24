@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Nolicense
 pragma solidity ^0.8.4;
 
-import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol';
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 contract JReview is ContextUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
@@ -52,7 +52,7 @@ contract JReview is ContextUpgradeable {
         // check if the bounty is greater than balance
         require(
             jToken.balanceOf(submitter) >= bounty,
-            'Insufficient J Token balance'
+            "Insufficient J Token balance"
         );
 
         jToken.transferFrom(_msgSender(), address(this), bounty);
@@ -79,12 +79,12 @@ contract JReview is ContextUpgradeable {
         address reviewer = _msgSender();
 
         // check if the reviewer holds the NFT
-        require(govToken.balanceOf(reviewer) > 0, 'Uauthorized reviewer');
+        require(govToken.balanceOf(reviewer) > 0, "Uauthorized reviewer");
 
         address submitter = submitters[id];
 
         // check if the publisher address exists
-        require(submitter != address(0), 'Invalid application id');
+        require(submitter != address(0), "Invalid application id");
 
         // add the reviewer to the application
         reviews[submitter][id].reviewers.push(reviewer);
@@ -95,13 +95,13 @@ contract JReview is ContextUpgradeable {
         address submitter = submitters[id];
 
         // check if the application exists
-        require(submitter != address(0), 'Invalid application id');
+        require(submitter != address(0), "Invalid application id");
 
         // check if the submitter is the same as the sender
-        require(_msgSender() == submitter, 'Unauthorized to release bounty');
+        require(_msgSender() == submitter, "Unauthorized to release bounty");
 
         // check if there are any reviews
-        require(reviews[submitter][id].reviewerCount > 0, 'No reviewers found');
+        require(reviews[submitter][id].reviewerCount > 0, "No reviewers found");
 
         // if there is any bounty, release it
         if (reviews[submitter][id].bounty > 0) {
@@ -131,7 +131,11 @@ contract JReview is ContextUpgradeable {
         address submitter = submitters[id];
 
         // check if the application exists
-        require(submitter != address(0), 'Invalid application id');
+        require(submitter != address(0), "Invalid application id");
         return reviews[submitter][id];
+    }
+
+    function setToken(address _token) public {
+        jToken = IERC20Upgradeable(_token);
     }
 }
