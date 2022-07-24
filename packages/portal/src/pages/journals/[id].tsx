@@ -1,3 +1,4 @@
+import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Typography } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
 
