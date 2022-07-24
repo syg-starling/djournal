@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: Nolicense
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/utils/Context.sol';
 
 contract JReview is Context {
-    IERC721 private immutable govToken;
+    IERC721Upgradeable private immutable govToken;
     IERC20 private immutable jToken;
-    uint constant maxReviews = 100;
+    uint256 constant maxReviews = 100;
 
-    constructor(IERC721 govTokenAddress, IERC20 jTokenAddress) {
+    constructor(IERC721Upgradeable govTokenAddress, IERC20 jTokenAddress) {
         govToken = govTokenAddress;
         jToken = jTokenAddress;
     }
@@ -45,10 +45,10 @@ contract JReview is Context {
         // check if the bounty is greater than balance
         require(
             jToken.balanceOf(submitter) >= bounty,
-            "Insufficient J Token balance"
+            'Insufficient J Token balance'
         );
 
-        jToken.transfer
+        jToken.transferFrom(_msgSender(), address(this), bounty);
 
         // save the application
         _reviews[submitter][applicationUuid] = ReviewApplication(
@@ -68,12 +68,12 @@ contract JReview is Context {
         address reviewer = _msgSender();
 
         // check if the reviewer holds the NFT
-        require(govToken.balanceOf(reviewer) > 0, "Uauthorized reviewer");
+        require(govToken.balanceOf(reviewer) > 0, 'Uauthorized reviewer');
 
         address submitter = _submitter[applicationUuid];
 
         // check if the publisher address exists
-        require(submitter != address(0), "Invalid application id");
+        require(submitter != address(0), 'Invalid application id');
 
         // add the reviewer to the application
         _reviews[submitter][applicationUuid].reviewers.push(reviewer);
@@ -84,22 +84,22 @@ contract JReview is Context {
         address submitter = _submitter[applicationUuid];
 
         // check if the application exists
-        require(submitter != address(0), "Invalid application id");
+        require(submitter != address(0), 'Invalid application id');
 
         // check if the submitter is the same as the sender
-        require(_msgSender() == submitter, "Unauthorized to release bounty");
+        require(_msgSender() == submitter, 'Unauthorized to release bounty');
 
         // check if there are any reviews
         require(
             _reviews[submitter][applicationUuid].reviewerCount > 0,
-            "No reviewers found"
+            'No reviewers found'
         );
 
         // if there is any bounty, release it
         if (_reviews[submitter][applicationUuid].bounty > 0) {
             uint256 amountToPay = _reviews[submitter][applicationUuid].bounty /
                 _reviews[submitter][applicationUuid].reviewerCount;
-            uint counter = 0;
+            uint256 counter = 0;
 
             for (
                 counter = 0;
