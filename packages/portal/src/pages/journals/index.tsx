@@ -1,3 +1,4 @@
+import { Paper, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, Modal, Typography, Card, CardHeader } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import { RootState } from '~/src/store'
@@ -6,6 +7,7 @@ import styles from '~/src/styles/Home.module.css'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import PageLayout from '../PageLayout'
 import { setModalForm } from '../../reducers/journalSlice'
+import CreateJournalForm from './form'
 const columns = [
   { field: 'journalName', headerName: 'Journal Title', width: 70 },
   { field: 'authorName', headerName: 'Author', width: 70 },
@@ -28,6 +30,7 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  padding: '10px'
 };
 
 const Journals: NextPage = () => {
@@ -43,9 +46,54 @@ const Journals: NextPage = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div>
-          Journal List
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <div>
+            <CardHeader
+              title='Journals'
+            />
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <Button
+              variant='contained'
+              onClick={() => dispatch(setModalForm(true))}
+            >
+              Add Journal
+            </Button>
+          </div>
         </div>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650, mt: '1rem' }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Journal Title</TableCell>
+                <TableCell align="right">Author</TableCell>
+                <TableCell align="right">Year Published</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.journalName}
+                  </TableCell>
+                  <TableCell align="right">{row.authorName}</TableCell>
+                  <TableCell align="right">{row.yearPublished}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Modal
+          open={modalForm}
+          onClose={() => dispatch(setModalForm(false))}
+        >
+          <Card style={style}>
+            <CreateJournalForm />
+          </Card>
+        </Modal>
       </div>
     </PageLayout>
   )

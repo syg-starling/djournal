@@ -33,11 +33,20 @@ const initialState: JournalState = {
 };
 
 export const fetchJournals = createAsyncThunk(
-  'journal/getJournals',
-  async (params) => {
-    const response = await getJournals(params)
-    return response.data;
-  });
+    'journal/getJournals',
+    async (params) => {
+        const response = await getJournals(params)
+        return response.data;
+    }
+);
+
+export const createJournal = createAsyncThunk(
+    'journal/createJournals',
+    async (params) => {
+        const response = await postJournal(params)
+        return response.data;
+    }
+);
 
 export const journalSlice = createSlice({
   name: 'journal',
