@@ -12,6 +12,7 @@ import type { RootState } from '../store'
 import { 
   web3, 
   contractToken,
+  contractJGovNFT,
   WEI,
 } from '../utils/web3'
 
@@ -30,6 +31,7 @@ export type UserState = {
   processingMetamask: boolean;
   account: string;
   balance: number;
+  isMember: boolean;
 }
 
 const initialState: UserState = {
@@ -40,6 +42,7 @@ const initialState: UserState = {
   processingMetamask: false,
   account: '',
   balance: 0,
+  isMember: false,
 }
 
 export const persistConfig: Reducer.PersistConfig<UserState> = {
@@ -61,6 +64,7 @@ export const accountChanged = createAsyncThunk(
     const { user } = getState()
     console.log('accountChanged user', user)
     if (accounts.length === 0) {
+      console.log('accountChanged accounts.length', accounts.length)
       return rejectWithValue('logout')
     } else {
       if (user.account && accounts[0].toLowerCase() !== user.account) {
@@ -75,16 +79,25 @@ export const accountChanged = createAsyncThunk(
 export const getBalance = createAsyncThunk(
   'user/getBalance',
   async (account: string) => {
-    const tokenBalance = contractToken.methods.balanceOf(account).call()
+    const tokenBalance = await contractToken.methods.balanceOf(account).call()
     const balance = Big(tokenBalance).div(WEI).toFixed(0, 0) // round down
     return Number(balance)
+  },
+)
+
+export const checkMember = createAsyncThunk(
+  'user/checkMember',
+  async (account: string) => {
+    const tokenBalance = await contractJGovNFT.methods.balanceOf(account).call()
+    return (tokenBalance !== '0')
   },
 )
 
 export const setAccount = createAsyncThunk(
   'user/setAccount',
   async (account: string, { dispatch }) => {
-    dispatch(getBalance(account))
+    await dispatch(checkMember(account))
+    await dispatch(getBalance(account))
     return account ? account.toLocaleLowerCase() : ''
   },
 )
@@ -93,9 +106,13 @@ export const connect = createAsyncThunk(
   'user/connect', 
   async (_, { dispatch }) => {
     web3.currentProvider.on('accountsChanged', async (e) => {
-      console.log('accountsChanged', e)
-      const accounts = await web3.eth.requestAccounts()
-      dispatch(accountChanged(accounts))
+      try {
+        console.log('accountsChanged', e)
+        const accounts = await web3.eth.requestAccounts()
+        dispatch(accountChanged(accounts))
+      } catch (e) {
+        dispatch(accountChanged([]))
+      }
     })
 
     web3.currentProvider.on('disconnect', (e) => {
@@ -144,6 +161,7 @@ export const userSlice = createSlice({
       .addCase(connect.rejected, state => {
         state.processingMetamask = false
         state.account = ''
+        state.isMember = false
         state.balance = 0
       })
       .addCase(setAccount.fulfilled, (state, { payload }: PayloadAction<any>) => {
@@ -152,8 +170,14 @@ export const userSlice = createSlice({
       .addCase(getBalance.fulfilled, (state, { payload }: PayloadAction<any>) => {
         state.balance = payload
       })
+      .addCase(checkMember.fulfilled, (state, { payload }: PayloadAction<any>) => {
+        console.log('isMember', payload)
+        state.isMember = payload
+      })
       .addCase(accountChanged.rejected, state => {
+        console.log('accountChanged.rejected')
         state.account = ''
+        state.isMember = false
         state.balance = 0
       })
   }

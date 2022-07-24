@@ -20,24 +20,20 @@ const Login: NextPage = () => {
   const { 
     processingMetamask,
     account,
+    isMember,
   } = useAppSelector((state: RootState) => state.user)
 
   const handleClick = async () => {
     await dispatch(connect())
   }
-  
-  const handleTest = () => {
-    console.log(account)
-  }
 
   useEffect(() => {
-    if (!account) return
+    if (!isMember) return
     const { returnUrl } = router.query
-    
     router.replace({
       pathname: returnUrl || '/',
     })
-  }, [account])
+  }, [isMember])
 
   return (
     <div className={styles.container}>
@@ -48,40 +44,41 @@ const Login: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <Button
-          variant="contained"
-          onClick={handleTest}
-        >
-          TEST
-        </Button>
-        <Button
-          variant="contained"
-          color="metamask"
-          onClick={handleClick}
-        >
-          <img
-            src="/metamask.png"
-            alt="metamask"
-            width={22}
-          />
-          <Typography
-            sx={{
-              flex: 1,
-              marginLeft: '1rem',
-              fontWeight: 600,
-            }}
+        {!account && (
+          <Button
+            variant="contained"
+            color="metamask"
+            onClick={handleClick}
           >
-            Connect to MetaMask
+            <img
+              src="/metamask.png"
+              alt="metamask"
+              width={22}
+            />
+            <Typography
+              sx={{
+                flex: 1,
+                marginLeft: '1rem',
+                fontWeight: 600,
+              }}
+            >
+              Connect to MetaMask
+            </Typography>
+            <CircularProgress
+              size={24}
+              color="white"
+              sx={{
+                marginLeft: '0.5rem',
+                opacity: processingMetamask ? 1 : 0,
+              }}
+            />
+          </Button>
+        )}
+        {(account && !isMember) && (
+          <Typography>
+            This is member only DAO
           </Typography>
-          <CircularProgress
-            size={24}
-            color="white"
-            sx={{
-              marginLeft: '0.5rem',
-              opacity: processingMetamask ? 1 : 0,
-            }}
-          />
-        </Button>
+        )}
       </main>
     </div>
   )

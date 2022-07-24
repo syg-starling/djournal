@@ -10,7 +10,7 @@ export { RouteGuard }
 function RouteGuard({ children }) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
-  const { account } = useAppSelector((state: RootState) => state.user)
+  const { isMember } = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -36,13 +36,13 @@ function RouteGuard({ children }) {
       router.events.off('routeChangeComplete', authCheck)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [isMember])
 
   function authCheck(url) {
     // redirect to login page if accessing a private page and not logged in 
     const publicPaths = ['/login']
     const path = url.split('?')[0]
-    if (!account && !publicPaths.includes(path)) {
+    if (!isMember && !publicPaths.includes(path)) {
       setAuthorized(false)
       router.push({
         pathname: '/login',
