@@ -8,6 +8,7 @@ import {
 
 import { getJournals } from '../services/journal'
 import { Journal } from '../../../service/src/app/journal/journal.interface'
+import { RootState } from '../store';
 
 export enum StatusEnum {
   Idle = 'IDLE',
@@ -40,6 +41,14 @@ export const fetchJournals = createAsyncThunk(
     }
 );
 
+export const fetchJournal = createAsyncThunk(
+  'journal/getJournal',
+  async (params) => {
+    const response = await getJournals(params)
+    return response.data;
+  }
+);
+
 export const createJournal = createAsyncThunk(
     'journal/createJournals',
     async (params) => {
@@ -68,6 +77,28 @@ export const journalSlice = createSlice({
       .addCase(fetchJournals.rejected, (state, { payload }: PayloadAction<any>) => {
         state.status = { ...state.status, fetchJournals: StatusEnum.Error };
         state.error = { ...state.error, [payload?.name]: payload?.message };
+      })
+      .addCase(fetchJournal.pending, state => {
+        state.status = { ...state.status, fetchJournal: StatusEnum.Loading };
+        state.selected = null
+      })
+      .addCase(fetchJournal.fulfilled, (state, { payload }) => {
+        state.status = { ...state.status, fetchJournal: StatusEnum.Idle };
+        state.selected = payload;
+      })
+      .addCase(fetchJournal.rejected, (state, { payload }: PayloadAction<any>) => {
+        state.status = { ...state.status, fetchJournal: StatusEnum.Error };
+        state.error = { ...state.error, [payload?.name]: payload?.message };
+      })
+      .addCase(createJournal.pending, state => {
+        state.status = { ...state.status, createJournal: StatusEnum.Loading };
+      })
+      .addCase(createJournal.fulfilled, (state, { payload }) => {
+        state.status = { ...state.status, createJournal: StatusEnum.Idle };
+      })
+      .addCase(createJournal.rejected, (state, { payload }: PayloadAction<any>) => {
+        state.status = { ...state.status, createJournal: StatusEnum.Error };
+        state.error = { ...state.error, [payload?.name]: payload?.message };
       });
   }
 });
@@ -75,6 +106,9 @@ export const journalSlice = createSlice({
 export const {
   setModalForm,
 } = journalSlice.actions;
+
+export const selectJournal = (state: RootState) => state.journal?.selected
+
 
 // exporting the reducer here, as we need to add this to the store
 export default journalSlice.reducer

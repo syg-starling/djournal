@@ -8,21 +8,31 @@ import styles from '~/src/styles/Home.module.css'
 import PageLayout from '../PageLayout'
 import { useRouter } from 'next/router'
 import Reviews from './reviews'
+import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '~/src/hooks'
+import { fetchJournal, selectJournal } from '~/src/reducers/journalSlice'
 
-const journal = {
-  id: '3',
-  journalName: 'Getting roasted 24/7',
-  authorName: 'Chua Wei Siong',
-  yearPublished: '1990',
-  details: 'Sample Content',
-  reviewClosedAt: moment().add(1, 'd'),
-}
+// const journal = {
+//   id: '3',
+//   journalName: 'Getting roasted 24/7',
+//   authorName: 'Chua Wei Siong',
+//   yearPublished: '1990',
+//   details: 'Sample Content',
+//   reviewClosedAt: moment().add(1, 'd'),
+// }
 
 const Journal: NextPage = () => {
   const router = useRouter()
+  const journal = useAppSelector(selectJournal)
+  const dispatch = useAppDispatch()
   const onClickBack = () => {
     router.push('/journals')
   }
+  useEffect(() => {
+    const { id } = router.query
+    dispatch(fetchJournal(id))
+  }, [])
+  if (!journal) return null
   return (
     <PageLayout>
       <div className={styles.container}>

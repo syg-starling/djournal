@@ -6,20 +6,10 @@ import { RootState } from '~/src/store'
 import styles from '~/src/styles/Home.module.css'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import PageLayout from '../PageLayout'
-import { fetchJournals, setModalForm } from '../../reducers/journalSlice'
+import { fetchJournals, setModalForm, StatusEnum } from '../../reducers/journalSlice'
 import CreateJournalForm from './form'
 import { useEffect } from 'react'
-const columns = [
-  { field: 'journalName', headerName: 'Journal Title', width: 70 },
-  { field: 'authorName', headerName: 'Author', width: 70 },
-  { field: 'yearPublished', headerName: 'Year Published', width: 70 },
-]
-
-const rows = [
-  { id: '1', journalName: 'Becoming a XXR at 27', authorName: 'Keith Ang', yearPublished: '1995' },
-  { id: '2', journalName: 'Discovering Bugs on Portal Admin', authorName: 'Tay/Dai Yu Jie', yearPublished: '1993' },
-  { id: '3', journalName: 'Getting roasted 24/7', authorName: 'Chua Wei Siong', yearPublished: '1990' },
-]
+import { useRouter } from 'next/router'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -36,7 +26,14 @@ const style = {
 
 const Journals: NextPage = () => {
   const dispatch = useAppDispatch()
-  const { modalForm, list: rows } = useAppSelector((state: RootState) => state?.journal)
+  const router = useRouter()
+  const { modalForm, list: rows, status } = useAppSelector((state: RootState) => state?.journal)
+
+  useEffect(() => {
+    if (status.createJournalReview === StatusEnum.Idle) {
+      dispatch(fetchJournals())
+    }
+  }, [status.createJournalReview])
 
   useEffect(() => {
     dispatch(fetchJournals())
@@ -79,6 +76,7 @@ const Journals: NextPage = () => {
                 <TableRow
                   key={row.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  onClick={() => { router.push(`/journals/${row.id}`) }}
                 >
                   <TableCell component="th" scope="row">
                     {row.journalName}
