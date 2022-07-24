@@ -1,8 +1,7 @@
-import { Button, CardHeader, Divider, TextField } from '@mui/material'
-import { watch } from 'fs'
+import { Button, CardHeader, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppDispatch, useAppSelector } from '~/src/hooks'
-import journalSlice, { createJournal, setModalForm } from '~/src/reducers/journalSlice'
+import { createJournal, setModalForm } from '~/src/reducers/journalSlice'
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const CreateJournalForm = () => {

@@ -2,37 +2,45 @@ import { Button, Card, CardActions, CardContent, Typography } from '@mui/materia
 import { NextPage } from 'next'
 import Head from 'next/head'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import moment from 'moment'
 
 import styles from '~/src/styles/Home.module.css'
 import PageLayout from '../PageLayout'
 import { useRouter } from 'next/router'
 import Reviews from './reviews'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '~/src/hooks'
 import { fetchJournal, selectJournal } from '~/src/reducers/journalSlice'
-
-// const journal = {
-//   id: '3',
-//   journalName: 'Getting roasted 24/7',
-//   authorName: 'Chua Wei Siong',
-//   yearPublished: '1990',
-//   details: 'Sample Content',
-//   reviewClosedAt: moment().add(1, 'd'),
-// }
+import SubmitReviewForm from './form-submit-review'
+import ModalForm from '~/src/components/formModal'
 
 const Journal: NextPage = () => {
   const router = useRouter()
   const journal = useAppSelector(selectJournal)
   const dispatch = useAppDispatch()
+  const [showForm, setModalForm] = useState(false)
   const onClickBack = () => {
     router.push('/journals')
   }
+
+  const onClickSubmitReview = () => {
+    setModalForm(true)
+  }
+
+  const onClickSubmitApproval = () => { }
+
+  const onCloseModal = () => {
+    setModalForm(false)
+  }
+
   useEffect(() => {
     const { id } = router.query
     dispatch(fetchJournal(id))
   }, [])
-  if (!journal) return null
+
+  if (!journal) {
+    return null
+  }
+
   return (
     <PageLayout>
       <div className={styles.container}>
@@ -62,13 +70,25 @@ const Journal: NextPage = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size="small" color="info">
+            {
+              !journal.reviewStarted &&
+              <Button size="small" color="info" onClick={onClickSubmitReview}>
+                Submit for Review
+              </Button>
+            }
+            <Button size="small" color="inherit" onClick={onClickSubmitApproval}>
               Submit for Approval
             </Button>
           </CardActions>
         </Card>
         <Reviews journal={journal} />
       </div>
+      <ModalForm
+        modalForm={showForm}
+        onClose={onCloseModal}
+      >
+        <SubmitReviewForm journalId={journal?.id} onCloseForm={onCloseModal} />
+      </ModalForm>
     </PageLayout>
   )
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { UpdateJournalReviewDto } from "./update-journal-review.dto";
 import { JournalReview } from "./journal-review.entity";
 import { JournalReviewService } from "./journal-review.service";
@@ -9,8 +9,8 @@ export class JournalReviewController {
   constructor(private readonly journalReviewService: JournalReviewService) { }
 
   @Get('/')
-  public async getJournalReviews(): Promise<JournalReview[]> {
-    return this.journalReviewService.getAll()
+  public async getJournalReviews(@Query() where: Partial<JournalReview>): Promise<JournalReview[]> {
+    return this.journalReviewService.getAll(where)
   }
 
   @Get('/:id')

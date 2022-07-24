@@ -3,6 +3,8 @@ import { CacheProvider } from '@emotion/react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { LocalizationProvider } from '@mui/x-date-pickers'
 
 import createEmotionCache from '../utils/createEmotionCache'
 import { store, persistor } from '../store'
@@ -21,11 +23,13 @@ const MyApp = (props: any) => {
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <RouteGuard>
-              <Component {...pageProps} />
-            </RouteGuard>
-          </PersistGate>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <PersistGate loading={null} persistor={persistor}>
+              <RouteGuard>
+                <Component {...pageProps} />
+              </RouteGuard>
+            </PersistGate>
+          </LocalizationProvider>
         </Provider>
       </ThemeProvider>
     </CacheProvider>

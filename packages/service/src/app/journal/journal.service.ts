@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { Journal } from './journal.entity'
-import { CreateJournalDto } from './journal.dto'
+import { CreateJournalDto } from './create-journal.dto'
 import { User } from '../user/user.entity'
+import { UpdateJournalDto } from './update-journal.dto'
 
 @Injectable()
 export class JournalService {
@@ -16,6 +17,9 @@ export class JournalService {
   }
 
   public async getJournal(id: string): Promise<Journal | null> {
+    if (!id) {
+      return null
+    }
     return await this.journalRepo.createQueryBuilder('j')
       .leftJoinAndSelect(User, "user", "j.authorId = user.id")
       .where('j.id = :id', { id })
@@ -26,5 +30,16 @@ export class JournalService {
     return await this.journalRepo.createQueryBuilder('j')
       .leftJoinAndSelect(User, "user", "j.authorId = user.id")
       .getMany()
+  }
+
+  public async update(id: string, updates: UpdateJournalDto): Promise<Journal> {
+    if (!id) {
+      throw new BadRequestException('Invalid id')
+    }
+    const journal = await this.getJournal(id)
+    if (!journal) {
+      throw new NotFoundException('Journal not found')
+    }
+    return this.journalRepo.save({ ...journal, ...updates })
   }
 }

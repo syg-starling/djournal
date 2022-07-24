@@ -61,7 +61,7 @@ const Reviews = ({ journal }: any) => {
                   <Avatar alt={review?.reviewer?.name} src="/static/images/avatar/1.jpg" />
                 </ListItemAvatar>
                 <ListItemText
-                  primary={<Rating precision={0.5} max={5} value={review.rating} />}
+                  primary={<Rating precision={0.5} max={5} value={review.rating} readOnly />}
                   secondary={
                     <>
                       <Typography

@@ -5,7 +5,7 @@ import {
   PayloadAction,
   createAsyncThunk,
 } from '@reduxjs/toolkit';
-import { getJournal, getJournals, postJournal } from '../services/journal';
+import * as srv from '../services/journal';
 
 import { Journal } from '../../../service/src/app/journal/journal.interface'
 import { RootState } from '../store';
@@ -34,28 +34,49 @@ const initialState: JournalState = {
 };
 
 export const fetchJournals = createAsyncThunk(
-    'journal/getJournals',
-    async (params) => {
-        const response = await getJournals(params)
-        return response.data;
-    }
+  'journal/getJournals',
+  async (params) => {
+    const response = await srv.getJournals(params)
+    return response.data;
+  }
 );
 
 export const fetchJournal = createAsyncThunk(
   'journal/getJournal',
   async (id: string) => {
-    const response = await getJournal({ id })
+    const response = await srv.getJournal({ id })
     return response.data;
   }
 );
 
 export const createJournal = createAsyncThunk(
-    'journal/createJournals',
-    async (params) => {
-        const response = await postJournal(params)
-        return response.data;
-    }
+  'journal/createJournals',
+  async (params) => {
+    const response = await srv.postJournal(params)
+    return response.data;
+  }
 );
+
+export const startReview = createAsyncThunk(
+  'journal/startReview',
+  async (payload) => {
+    const response = await srv.updateJournal({
+      id: payload.id,
+      reviewStarted: true,
+      reviewClosedAt: payload.reviewClosedAt,
+      bounty: payload.bounty,
+    })
+    return response.data
+  }
+)
+
+export const updateJournal = createAsyncThunk(
+  'journal/updateJournal',
+  async (payload) => {
+    const response = await srv.updateJournal(payload)
+    return response.data
+  }
+)
 
 export const journalSlice = createSlice({
   name: 'journal',
@@ -99,6 +120,16 @@ export const journalSlice = createSlice({
       .addCase(createJournal.rejected, (state, { payload }: PayloadAction<any>) => {
         state.status = { ...state.status, createJournal: StatusEnum.Error };
         state.error = { ...state.error, [payload?.name]: payload?.message };
+      })
+      .addCase(startReview.pending, state => {
+        state.status = { ...state.status, startReview: StatusEnum.Loading };
+      })
+      .addCase(startReview.fulfilled, (state, { payload }) => {
+        state.status = { ...state.status, startReview: StatusEnum.Idle };
+      })
+      .addCase(startReview.rejected, (state, { payload }: PayloadAction<any>) => {
+        state.status = { ...state.status, startReview: StatusEnum.Error };
+        state.error = { ...state.error, [payload?.name]: payload?.message };
       });
   }
 });
@@ -108,6 +139,7 @@ export const {
 } = journalSlice.actions;
 
 export const selectJournal = (state: RootState) => state.journal?.selected
+export const selectStatus = (state: RootState) => state.journal.status
 
 
 // exporting the reducer here, as we need to add this to the store

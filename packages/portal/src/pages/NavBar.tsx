@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useRouter } from 'next/router'
 import { Container } from "@mui/system"
 
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { RootState } from '../store'
+// import { useAppDispatch, useAppSelector } from '../hooks'
+// import { RootState } from '../store'
 
 const NavLink = ({ children, href }: any) => {
   return (

@@ -24,8 +24,8 @@ export class JournalReviewService {
     return this.journalReviewRepo.findOneBy({ id })
   }
 
-  public async getAll(): Promise<JournalReview[]> {
-    return this.journalReviewRepo.find()
+  public async getAll(where: Partial<JournalReview>): Promise<JournalReview[]> {
+    return this.journalReviewRepo.find({ where })
   }
 
   public async update(id: string, updates: UpdateJournalReviewDto): Promise<JournalReview> {

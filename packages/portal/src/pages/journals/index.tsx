@@ -1,6 +1,8 @@
 import { Paper, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, Modal, Typography, Card, CardHeader } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import DoneIcon from '@mui/icons-material/Done'
+import ClearIcon from '@mui/icons-material/Clear'
 import { RootState } from '~/src/store'
 
 import styles from '~/src/styles/Home.module.css'
@@ -67,8 +69,9 @@ const Journals: NextPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Journal Title</TableCell>
-                <TableCell align="right">Author</TableCell>
-                <TableCell align="right">Year Published</TableCell>
+                <TableCell align="center">Author</TableCell>
+                <TableCell align="center">Year Published</TableCell>
+                <TableCell align="center">Review Started</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -76,13 +79,18 @@ const Journals: NextPage = () => {
                 <TableRow
                   key={row.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  onClick={() => { router.push(`/journals/${row.id}`) }}
+                  onClick={() => {
+                    if (row.id) {
+                      router.push(`/journals/${row.id}`)
+                    }
+                  }}
                 >
                   <TableCell component="th" scope="row">
                     {row.journalName}
                   </TableCell>
-                  <TableCell align="right">{row.authorId}</TableCell>
-                  <TableCell align="right">{row.yearPublished}</TableCell>
+                  <TableCell align="center">{row.authorId}</TableCell>
+                  <TableCell align="center">{row.yearPublished}</TableCell>
+                  <TableCell align="center">{row.reviewStarted ? <DoneIcon /> : <ClearIcon />}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -23,5 +23,14 @@ export class Journal extends BaseEntity {
   yearPublished: string;
 
   //virtual property
-  author: User
+  author: User;
+
+  @Column({ type: 'timestamp', nullable: false })
+  reviewClosedAt: string;
+
+  @Column({ type: 'bool', nullable: false, default: false })
+  reviewStarted: boolean;
+
+  @Column({ type: 'bigint', nullable: true })
+  bounty: number;
 }

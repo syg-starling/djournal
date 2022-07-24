@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
-import { BaseEntity } from "~/../common/dist";
+import { BaseEntity } from "@starterapp/common/dist";
 
 export class JournalReviewDto extends BaseEntity {
   @IsNotEmpty()

@@ -1,5 +1,5 @@
 import { Column, Entity } from "typeorm";
-import { BaseEntity } from "~/../common/dist";
+import { BaseEntity } from "@starterapp/common/dist";
 
 @Entity()
 export class JournalApproval extends BaseEntity {
