@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '~/src/hooks'
 import { selectName, getPrice, selectPrice } from '~/src/reducers/userSlice'
 
 import styles from '~/src/styles/Home.module.css'
+import PageLayout from '../PageLayout'
 
 const User: NextPage = () => {
   const userName = useAppSelector(selectName)
@@ -16,19 +17,21 @@ const User: NextPage = () => {
     dispatch(getPrice())
   }, [])
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>DJournal | User Page</title>
-        <meta name="description" content="Decentralised Journal" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <PageLayout>
+      <div className={styles.container}>
+        <Head>
+          <title>DJournal | User Page</title>
+          <meta name="description" content="Decentralised Journal" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <div>
-        User {userName}
-        <br />
-        Ethereum Price: {price}
+        <div>
+          User {userName}
+          <br />
+          Ethereum Price: {price}
+        </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }
 
