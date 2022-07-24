@@ -9,6 +9,7 @@ import { JournalReview } from '../models';
 import * as srv from '../services/journal-review';
 
 import type { RootState } from '../store';
+import { contractJReview, GAS_LIMIT, GAS_PRICE } from '../utils/web3';
 
 export enum StatusEnum {
   Idle = 'IDLE',
@@ -56,8 +57,15 @@ export const fetchJournalReviews = createAsyncThunk(
 
 export const createJournalReview = createAsyncThunk(
   'journal-review/create',
-  async (payload: Partial<JournalReview>) => {
-    const response = await srv.createJournalReview(payload)
+  async (payload: Partial<JournalReview>, { getState }) => {
+    const { user } = getState()
+    let response = await contractJReview.methods.submitReview(payload.journalId).send({
+      from: user.account,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT,
+    })
+    if (response.ok)
+      response = await srv.createJournalReview(payload)
     return response.data
   });
 
