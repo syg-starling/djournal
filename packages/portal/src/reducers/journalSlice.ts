@@ -9,6 +9,7 @@ import * as srv from '../services/journal';
 
 import { Journal } from '../../../service/src/app/journal/journal.interface'
 import { RootState } from '../store';
+import { contractJReview, GAS_LIMIT, GAS_PRICE } from '../utils/web3';
 
 export enum StatusEnum {
   Idle = 'IDLE',
@@ -59,14 +60,29 @@ export const createJournal = createAsyncThunk(
 
 export const startReview = createAsyncThunk(
   'journal/startReview',
-  async (payload) => {
-    const response = await srv.updateJournal({
-      id: payload.id,
-      reviewStatus: 'STARTED',
-      reviewClosedAt: payload.reviewClosedAt,
-      bounty: payload.bounty,
-    })
-    return response.data
+  async (payload, { getState }) => {
+    const { user } = getState()
+    console.log({ payload })
+    try {
+      let response = await contractJReview.methods.submitApplication(payload.id, payload.bounty).send({
+        from: user.account,
+        gasPrice: GAS_PRICE,
+        gasLimit: GAS_LIMIT,
+      })
+      console.log({ response })
+      if (response.ok)
+        response = await srv.updateJournal({
+          id: payload.id,
+          reviewStatus: 'STARTED',
+          reviewClosedAt: payload.reviewClosedAt,
+          bounty: payload.bounty,
+        })
+      return response.data
+    } catch (err) {
+      console.log({ err })
+    }
+
+
   }
 )
 

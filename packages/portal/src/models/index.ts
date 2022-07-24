@@ -9,4 +9,5 @@ export interface JournalReview {
   rating: number;
   remarks?: string;
   reviewer: User;
+  bounty?: string;
 }

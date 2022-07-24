@@ -59,7 +59,7 @@ export const createJournalReview = createAsyncThunk(
   'journal-review/create',
   async (payload: Partial<JournalReview>, { getState }) => {
     const { user } = getState()
-    let response = await contractJReview.methods.submitReview(payload.journalId).send({
+    let response = await contractJReview.methods.submitApplication(payload.journalId, payload.bounty).send({
       from: user.account,
       gasPrice: GAS_PRICE,
       gasLimit: GAS_LIMIT,

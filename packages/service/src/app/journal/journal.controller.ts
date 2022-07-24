@@ -28,7 +28,7 @@ export class JournalController {
   ) { }
 
   @Get('/:id')
-  public async getJournal(@Param('id', ParseUUIDPipe) id: string): Promise<Journal | null> {
+  public async getJournal(@Param('id') id: string): Promise<Journal | null> {
     if (!id) {
       return null
     }
