@@ -41,7 +41,7 @@ export class JournalController {
   public async createJournal(@UploadedFile() file: any, @Body() createJournalDto: CreateJournalDto): Promise<Journal> {
     //create smart contract for the bidding prior to journal creation
     console.log(createJournalDto.authorId)
-    const journal = await this.journalService.createJournal({ fileName: file.originalName, data: file.buffer, authorId: createJournalDto.authorId })
+    const journal = await this.journalService.createJournal({ fileName: file.originalName, data: file.buffer, ...createJournalDto })
     return journal
   }
 }
