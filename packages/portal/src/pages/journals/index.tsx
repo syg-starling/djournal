@@ -83,7 +83,7 @@ const Journals: NextPage = () => {
                   <TableCell component="th" scope="row">
                     {row.journalName}
                   </TableCell>
-                  <TableCell align="right">{row.authorName}</TableCell>
+                  <TableCell align="right">{row.authorId}</TableCell>
                   <TableCell align="right">{row.yearPublished}</TableCell>
                 </TableRow>
               ))}
