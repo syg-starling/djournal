@@ -2,6 +2,7 @@ import { Button, Card, CardActions, CardContent, Typography } from '@mui/materia
 import { NextPage } from 'next'
 import Head from 'next/head'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 
 import styles from '~/src/styles/Home.module.css'
 import PageLayout from '../PageLayout'
@@ -9,7 +10,7 @@ import { useRouter } from 'next/router'
 import Reviews from './reviews'
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '~/src/hooks'
-import { fetchJournal, selectJournal, selectStatus, StatusEnum } from '~/src/reducers/journalSlice'
+import { fetchJournal, selectJournal, selectStatus, startApproval, StatusEnum } from '~/src/reducers/journalSlice'
 import SubmitReviewForm from './form-submit-review'
 import ModalForm from '~/src/components/formModal'
 import { RootState } from '~/src/store'
@@ -30,18 +31,20 @@ const Journal: NextPage = () => {
     setModalForm(true)
   }
 
-  const onClickSubmitApproval = () => { }
+  const onClickSubmitApproval = () => {
+    dispatch(startApproval(journalId))
+  }
 
   const onCloseModal = () => {
     setModalForm(false)
   }
 
   useEffect(() => {
-    if (status.startReview === StatusEnum.Idle) {
+    if (status.startReview === StatusEnum.Idle || status.startApproval === StatusEnum.Idle) {
       const { id } = router.query
       dispatch(fetchJournal(id))
     }
-  }, [status.startReview])
+  }, [status.startReview, status.startApproval])
 
   useEffect(() => {
     const { id } = router.query
@@ -70,8 +73,8 @@ const Journal: NextPage = () => {
 
         <Card>
           <CardContent>
-            <Typography gutterBottom variant="h4" component="div">
-              {journal.journalName}
+            <Typography gutterBottom variant="h3" component="div">
+              {journal.journalName} {journal.approveStatus === 'APPROVED' && <TaskAltOutlinedIcon sx={{ color: 'green', ml: '0.5rem' }} />}
             </Typography>
             <Typography gutterBottom variant="body2" component="div">
               {journal.authorName} - Published in {journal.yearPublished}

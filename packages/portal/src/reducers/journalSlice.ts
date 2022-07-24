@@ -70,6 +70,17 @@ export const startReview = createAsyncThunk(
   }
 )
 
+export const startApproval = createAsyncThunk(
+  'journal/startApproval',
+  async (id: string) => {
+    const response = await srv.updateJournal({
+      id,
+      approvalStatus: 'STARTED',
+    })
+    return response.data
+  }
+)
+
 export const updateJournal = createAsyncThunk(
   'journal/updateJournal',
   async (payload) => {
@@ -129,6 +140,16 @@ export const journalSlice = createSlice({
       })
       .addCase(startReview.rejected, (state, { payload }: PayloadAction<any>) => {
         state.status = { ...state.status, startReview: StatusEnum.Error };
+        state.error = { ...state.error, [payload?.name]: payload?.message };
+      })
+      .addCase(startApproval.pending, state => {
+        state.status = { ...state.status, startApproval: StatusEnum.Loading };
+      })
+      .addCase(startApproval.fulfilled, (state, { payload }) => {
+        state.status = { ...state.status, startApproval: StatusEnum.Idle };
+      })
+      .addCase(startApproval.rejected, (state, { payload }: PayloadAction<any>) => {
+        state.status = { ...state.status, startApproval: StatusEnum.Error };
         state.error = { ...state.error, [payload?.name]: payload?.message };
       });
   }

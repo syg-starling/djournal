@@ -2,7 +2,7 @@ export enum ApproveStatus {
   NotStarted = 'NOT_STARTED',
   Started = 'STARTED',
   Pending = 'PENDING',
-  Done = 'DONE',
+  Approved = 'APPROVED',
 }
 
 export enum ReviewStatus {

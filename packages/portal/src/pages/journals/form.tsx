@@ -51,7 +51,7 @@ const CreateJournalForm = () => {
                     name='yearPublished'
                     control={control}
                     render={({
-                        field: { onChange, onBlur, value, name, ref },
+                        field: { onChange, onBlur, ref },
                     }) => (
                         <TextField
                             sx={{ margin: '5px' }}
