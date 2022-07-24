@@ -7,6 +7,7 @@ import {
   SwaggerDocumentOptions,
 } from '@nestjs/swagger'
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino'
+import session from 'express-session'
 
 import { name, version } from '~/package.json'
 
@@ -27,6 +28,14 @@ const setupApp = (
       optionsSuccessStatus: 200,
     })
   }
+
+  app.use(
+    session({
+      secret: 'my-secret',
+      resave: false,
+      saveUninitialized: false,
+    }),
+  )
 
   app.useGlobalPipes(
     new ValidationPipe({

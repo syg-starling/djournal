@@ -2,10 +2,8 @@ import { Expose } from 'class-transformer'
 
 export class User {
   @Expose()
-  name: string
+  id: string
 
   @Expose()
-  email: string
-
-  password: string
+  name?: string
 }

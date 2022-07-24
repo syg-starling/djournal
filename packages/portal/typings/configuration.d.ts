@@ -1,0 +1,7 @@
+export interface Configurations {
+  NEXT_PUBLIC_API_SERVER_SCHEME: string
+  NEXT_PUBLIC_API_SERVER_HOST: string
+  NEXT_PUBLIC_API_SERVER_PORT: string
+  NEXT_PUBLIC_TOKEN_ADDR: string
+  NEXT_PUBLIC_CONTRACT_ROLES_ADDR: string
+}

@@ -48,4 +48,10 @@ export class ConfigDto {
 
   @IsString()
   POSTGRES_DATABASE: string
+
+  @IsString()
+  RPC_URL: string
+
+  @IsString()
+  PRIVATE_KEY: string
 }
