@@ -9,116 +9,84 @@ import './JReview.sol';
 contract JouralContract is ContextUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter private _journalIdCounter;
-    CountersUpgradeable.Counter private _entryIdCounter;
-    uint256 private constant MAX_APPROVERS = 100;
+    uint8 constant MAX_APPROVERS = 100;
 
     JReview public jReview;
     IERC721Upgradeable public govToken;
+    uint8 public goal;
 
-    function initialize(address _jReviewAddress, address _govTokenAddress)
-        public
-        initializer
-    {
+    function initialize(
+        address _jReviewAddress,
+        address _govTokenAddress,
+        uint8 _goal
+    ) public initializer {
+        require(
+            MAX_APPROVERS >= _goal,
+            'Goal must be less than or equal to 100'
+        );
         jReview = JReview(_jReviewAddress);
         govToken = IERC721Upgradeable(_govTokenAddress);
+        goal = _goal;
     }
 
-    enum EntryStatus {
+    enum JournalStatus {
         SUBMITTED,
         PUBLISHED
-    }
-    struct Entry {
-        uint256 id;
-        JReview.ReviewApplication application;
-        address[] approvers;
-        uint8 approversCount;
-        EntryStatus status;
     }
 
     struct Journal {
         uint256 id;
-        string name;
-        uint8 requiredApprovals;
-        // map of publisher => entry id => entry
-        mapping(address => mapping(uint256 => Entry)) entries;
+        JReview.ReviewApplication application;
+        address[] approvers;
+        uint8 approversCount;
+        JournalStatus status;
     }
 
-    // map between journalid and journal
-    mapping(uint256 => Journal) public journals;
-
-    // entry id => publisher
+    // map of journalId to publisher
     mapping(uint256 => address) public publishers;
 
-    function createJournal(string memory name) public {
-        createJournal(name, 2);
-    }
+    // map of publisher to map of journalId to journal
+    mapping(address => mapping(uint256 => Journal)) public journals;
 
-    function createJournal(string memory name, uint8 requiredApprovals) public {
-        // set the cap for approvers
-        require(requiredApprovals <= MAX_APPROVERS, 'Too many approvers');
-
-        // create the journal
-        uint256 id = _journalIdCounter.current();
-        journals[id].id = id;
-        journals[id].name = name;
-        journals[id].requiredApprovals = requiredApprovals;
-        _journalIdCounter.increment();
-    }
-
-    function createEntry(uint256 journalId, uint256 applicationId)
-        public
-        returns (uint256)
-    {
+    function createJournal(uint256 applicationId) public returns (uint256) {
         // get the application
         JReview.ReviewApplication memory application = jReview.getApplication(
             applicationId
         );
 
-        // check if the application was meant for this journal
-        require(
-            application.journalId == journalId,
-            'Application does not belong to this journal'
-        );
-
-        // make a new journal entry from application
-        uint256 id = _entryIdCounter.current();
-        journals[journalId].entries[_msgSender()][id] = Entry(
+        // make a new journal from application
+        uint256 id = _journalIdCounter.current();
+        journals[_msgSender()][id] = Journal(
             id,
             application,
             new address[](MAX_APPROVERS),
             0,
-            EntryStatus.SUBMITTED
+            JournalStatus.SUBMITTED
         );
         publishers[id] = _msgSender();
-        _entryIdCounter.increment();
+        _journalIdCounter.increment();
 
         // return entry id
         return id;
     }
 
-    function approveSubmission(uint256 journalId, uint256 entryId) public {
-        // get the publisher from entryId
-        address publisher = publishers[entryId];
+    function approveJournal(uint256 journalId) public {
+        // get the publisher from journalId
+        address publisher = publishers[journalId];
         require(publisher != address(0), 'Invalid entry id');
 
         // check if the approver holds the NFT
         require(govToken.balanceOf(_msgSender()) > 0, 'Uauthorized reviewer');
 
         // approve the entry
-        journals[journalId].entries[publisher][entryId].approvers.push(
-            _msgSender()
-        );
+        journals[publisher][journalId].approvers.push(_msgSender());
 
         // increment the approvers count
-        journals[journalId].entries[publisher][entryId].approversCount++;
+        journals[publisher][journalId].approversCount++;
 
         // check if the approvers count is equal to the required approvals
-        if (
-            journals[journalId].entries[publisher][entryId].approversCount >=
-            journals[journalId].requiredApprovals
-        ) {
-            journals[journalId].entries[publisher][entryId].status = EntryStatus
-                .PUBLISHED;
+        if (journals[publisher][journalId].approversCount >= goal) {
+            journals[publisher][journalId].status = JournalStatus.PUBLISHED;
         }
     }
 }

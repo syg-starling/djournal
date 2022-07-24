@@ -7,7 +7,7 @@ require('dotenv').config({ path: '../.env' })
 const { ethers, upgrades } = require('hardhat')
 
 const tokenAddr = process.env.TOKEN_ADDR
-const jgovnftAddr = process.env.CONTRACT_JGOVNFT_ADDR
+const jgovnftAddr = process.env.JGOVNFT_ADDR
 
 async function main() {
   const [deployer] = await ethers.getSigners()

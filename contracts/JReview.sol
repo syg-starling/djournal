@@ -28,7 +28,7 @@ contract JReview is ContextUpgradeable {
         ReviewStatus status;
     }
 
-    // map of review_id to submitter
+    // map of reviewId to submitter
     mapping(uint256 => address) public submitters;
 
     // map of submitter to map of review_id to application
