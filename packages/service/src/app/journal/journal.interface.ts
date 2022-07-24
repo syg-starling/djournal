@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
+import { User } from '../user/user.interface'
 
 export class Journal {
   @Expose()
@@ -6,6 +7,13 @@ export class Journal {
 
   @Expose()
   email: string
+
+  @Expose()
+  @Type(() => User)
+  author: User
+
+  @Expose()
+  journalName: string
 
   password: string
 }

@@ -9,4 +9,12 @@ export class CreateJournalDto {
   @IsUUID()
   @IsString()
   authorId: string
+
+  @IsNotEmpty()
+  @IsString()
+  journalName: string
+
+  @IsNotEmpty()
+  @IsString()
+  yearPublished: string
 }
