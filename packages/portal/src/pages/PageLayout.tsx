@@ -3,10 +3,12 @@ import NavBar from "./NavBar";
 
 const PageLayout = ({ children }: any) => {
   return (
-    <Container>
+    <>
       <NavBar />
-      {children}
-    </Container>
+      <Container sx={{ pt: '2rem', mt: '4rem' }}>
+        {children}
+      </Container>
+    </>
   );
 }
 
