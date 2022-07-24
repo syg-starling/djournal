@@ -1,10 +1,8 @@
 import { History } from 'history'
 import { compose } from 'redux'
 import { WebStorage } from 'redux-persist/es/types'
-import { Theme as MuiTheme } from '@sygnum/mui/style'
-import { BaseColor, MaterialColor } from '@sygnum/mui/theme/color'
 
-import { Configurations } from './configurations'
+import { Configurations } from './configuration'
 
 declare global {
   interface Window {
@@ -32,11 +30,5 @@ declare global {
       whitelist: (Extract<keyof T, string>)[];
       storage?: WebStorage;
     }
-  }
-}
-
-declare module '@sygnum/mui/styles' {
-  interface Theme extends MuiTheme {
-    color: BaseColor & MaterialColor
   }
 }

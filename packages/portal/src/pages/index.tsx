@@ -1,15 +1,21 @@
 import { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Button } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 
-import styles from '~/src/styles/Home.module.css'
+import { useAppDispatch, useAppSelector } from '../hooks'
 import * as svc from '../services'
+import { RootState } from '../store'
+import styles from '~/src/styles/Home.module.css'
 
 const Home: NextPage = () => {
+  const { account } = useAppSelector((state: RootState) => state.user)
+  const dispatch = useAppDispatch()
+
   const handleClick = () => {
     svc.getUsers({})
   }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -19,6 +25,9 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
+        <Typography>
+          Connected Wallet: {account}
+        </Typography>
         <Button
           variant="contained"
           onClick={handleClick}

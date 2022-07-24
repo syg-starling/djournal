@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { 
   Button,
@@ -13,10 +15,29 @@ import { RootState } from '../store'
 
 const Login: NextPage = () => {
   const dispatch = useAppDispatch()
-  const { processingMetamask } = useAppSelector((state: RootState) => state.user)
-  const handleClick = () => {
-    dispatch(connect())
+  const router = useRouter()
+
+  const { 
+    processingMetamask,
+    account,
+  } = useAppSelector((state: RootState) => state.user)
+
+  const handleClick = async () => {
+    await dispatch(connect())
   }
+  
+  const handleTest = () => {
+    console.log(account)
+  }
+
+  useEffect(() => {
+    if (!account) return
+    const { returnUrl } = router.query
+    
+    router.replace({
+      pathname: returnUrl || '/',
+    })
+  }, [account])
 
   return (
     <div className={styles.container}>
@@ -29,8 +50,13 @@ const Login: NextPage = () => {
       <main className={styles.main}>
         <Button
           variant="contained"
+          onClick={handleTest}
+        >
+          TEST
+        </Button>
+        <Button
+          variant="contained"
           color="metamask"
-          fullWidth
           onClick={handleClick}
         >
           <img

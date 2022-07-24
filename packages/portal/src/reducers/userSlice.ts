@@ -6,9 +6,14 @@ import {
   createAsyncThunk,
 } from '@reduxjs/toolkit'
 import axios from 'axios'
+import Big from 'big.js'
 
 import type { RootState } from '../store'
-import { web3 } from '../utils/web3'
+import { 
+  web3, 
+  contractToken,
+  WEI,
+} from '../utils/web3'
 
 export enum StatusEnum {
   Idle = 'IDLE',
@@ -24,6 +29,7 @@ export type UserState = {
   error: Record<string, string>;
   processingMetamask: boolean;
   account: string;
+  balance: number;
 }
 
 const initialState: UserState = {
@@ -33,6 +39,15 @@ const initialState: UserState = {
   error: {},
   processingMetamask: false,
   account: '',
+  balance: 0,
+}
+
+export const persistConfig: Reducer.PersistConfig<UserState> = {
+  key: 'user',
+  version: 1,
+  whitelist: [
+    'account',
+  ],
 }
 
 export const getPrice = createAsyncThunk('user/getPrice', async () => {
@@ -42,17 +57,35 @@ export const getPrice = createAsyncThunk('user/getPrice', async () => {
 
 export const accountChanged = createAsyncThunk(
   'user/accountChanged',
-  async (accounts: string[], { getState, rejectWithValue }) => {
+  async (accounts: string[], { getState, rejectWithValue, dispatch }) => {
     const { user } = getState()
     console.log('accountChanged user', user)
     if (accounts.length === 0) {
-      return rejectWithValue(null)
+      return rejectWithValue('logout')
     } else {
       if (user.account && accounts[0].toLowerCase() !== user.account) {
         return rejectWithValue('logout')
       }
-      return accounts[0]
+      window.localStorage.setItem('connectorId', 'injected')
+      return dispatch(setAccount(accounts[0]))
     }
+  },
+)
+
+export const getBalance = createAsyncThunk(
+  'user/getBalance',
+  async (account: string) => {
+    const tokenBalance = contractToken.methods.balanceOf(account).call()
+    const balance = Big(tokenBalance).div(WEI).toFixed(0, 0) // round down
+    return Number(balance)
+  },
+)
+
+export const setAccount = createAsyncThunk(
+  'user/setAccount',
+  async (account: string, { dispatch }) => {
+    dispatch(getBalance(account))
+    return account ? account.toLocaleLowerCase() : ''
   },
 )
 
@@ -105,26 +138,31 @@ export const userSlice = createSlice({
       .addCase(connect.pending, state => {
         state.processingMetamask = true
       })
-      .addCase(connect.fulfilled, (state, { payload }: PayloadAction<any>) => {
+      .addCase(connect.fulfilled, (state) => {
         state.processingMetamask = false
-        state.account = payload
       })
       .addCase(connect.rejected, state => {
         state.processingMetamask = false
         state.account = ''
+        state.balance = 0
       })
-      .addCase(accountChanged.fulfilled, (state, { payload }: PayloadAction<any>) => {
+      .addCase(setAccount.fulfilled, (state, { payload }: PayloadAction<any>) => {
         state.account = payload
+      })
+      .addCase(getBalance.fulfilled, (state, { payload }: PayloadAction<any>) => {
+        state.balance = payload
       })
       .addCase(accountChanged.rejected, state => {
         state.account = ''
+        state.balance = 0
       })
   }
-});
+})
+
 // Here we are just exporting the actions from this slice, so that we can call them anywhere in our app.
 export const {
   setName,
-} = userSlice.actions;
+} = userSlice.actions
 
 // calling the above actions would be useless if we could not access the data in the state. So, we use something called a selector which allows us to select a value from the state.
 export const selectName = (state: RootState) => state.user.name

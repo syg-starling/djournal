@@ -11,9 +11,14 @@
       "http": ["../../node_modules/stream-http"],
       "https": ["../../node_modules/https-browserify"],
       "os": ["../../node_modules/os-browserify"]
-    }
+    },
+    "typeRoots": [
+      "../../node_modules/@types",
+      "typings"
+    ]
   },
   "include": [
+    "typings/*",
     "src/**/*.ts",
     "src/**/*.tsx"
   ],
