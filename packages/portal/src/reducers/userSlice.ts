@@ -119,17 +119,17 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setName: (state, action: PayloadAction<string>) => {
-      state.name = action.payload;
+      state.name = action.payload
     },
   },
   extraReducers: builder => {
     builder
       .addCase(getPrice.pending, state => {
-        state.status = { ...state.status, getPrice: StatusEnum.Loading };
+        state.status = { ...state.status, getPrice: StatusEnum.Loading }
       })
       .addCase(getPrice.fulfilled, (state, { payload }) => {
-        state.status = { ...state.status, getPrice: StatusEnum.Idle };
-        state.price = payload?.price || 0;
+        state.status = { ...state.status, getPrice: StatusEnum.Idle }
+        state.price = payload?.price || 0
       })
       .addCase(getPrice.rejected, (state, { payload }: PayloadAction<any>) => {
         state.status = { ...state.status, getPrice: StatusEnum.Error };

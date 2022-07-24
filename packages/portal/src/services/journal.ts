@@ -1,3 +1,4 @@
+import { Journal } from '~/../service/src/app/journal/journal.interface'
 import { api } from './api'
 
 export const getJournals = (params) => api.get('/journals', params)
