@@ -5,11 +5,13 @@ const testTokenABI = require('@starterapp/contract/abi/TestToken.json')
 const contractRolesABI = require('@starterapp/contract/abi/ContractRoles.json')
 const jReviewABI = require('@starterapp/contract/abi/JReview.json')
 const jGovNFTABI = require('@starterapp/contract/abi/JGovNFT.json')
+const journalABI = require('@starterapp/contract/abi/JournalContract.json')
 
 const tokenAddr = process.env.NEXT_PUBLIC_TOKEN_ADDR
 const contractRolesAddr = process.env.NEXT_PUBLIC_CONTRACT_ROLES_ADDR
 const jReviewAddr = process.env.NEXT_PUBLIC_JREVIEW_ADDR
 const jgovnftAddr = process.env.NEXT_PUBLIC_JGOVNFT_ADDR
+const journalAddr = process.env.NEXT_PUBLIC_JOURNAL_ADDR
 
 let _web3
 if (typeof window !== "undefined") {
@@ -27,11 +29,13 @@ let _contractToken
 let _contractRoles
 let _contractJGovNFT
 let _contractJReview
+let _contractJournal
 if (_web3) {
   _contractToken = new _web3.eth.Contract(testTokenABI.abi, tokenAddr)
   _contractRoles = new _web3.eth.Contract(contractRolesABI.abi, contractRolesAddr)
   _contractJGovNFT = new _web3.eth.Contract(jGovNFTABI.abi, jgovnftAddr)
   _contractJReview = new _web3.eth.Contract(jReviewABI.abi, jReviewAddr)
+  _contractJournal = new _web3.eth.Contract(journalABI.abi, journalAddr)
 }
 
 export const web3 = _web3
@@ -39,6 +43,7 @@ export const contractToken = _contractToken
 export const contractRoles = _contractRoles
 export const contractJGovNFT = _contractJGovNFT
 export const contractJReview = _contractJReview
+export const contractJournal = _contractJournal
 
 export const WEI = new Big(10).pow(18)
 export const GAS_LIMIT = 345577

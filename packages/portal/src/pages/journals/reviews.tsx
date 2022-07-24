@@ -1,13 +1,14 @@
 import { Avatar, Button, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Paper, Rating, TextField, Typography } from "@mui/material"
 import moment from 'moment'
 import { useState } from "react"
+
+import { RootState } from '~/src/store'
 import { useAppDispatch, useAppSelector } from "~/src/hooks"
 import { JournalReview } from "~/src/models"
 import { createJournalReview, selectReviews } from "~/src/reducers/journalReviewSlice"
-import { selectCurrentUser } from "~/src/reducers/userSlice"
 
 const Reviews = ({ journal }: any) => {
-  const currentUser = useAppSelector(selectCurrentUser)
+  const { account } = useAppSelector((state: RootState) => state.user)
   const [review, setReview] = useState('')
   const [rating, setRating] = useState(0)
   const reviews = useAppSelector(selectReviews) || []
@@ -22,8 +23,9 @@ const Reviews = ({ journal }: any) => {
     setRating(value)
   }
   const onSubmitReview = () => {
-    dispatch(createJournalReview({ remarks: review, rating, reviewerId: currentUser.id, journalId: journal.id }))
+    dispatch(createJournalReview({ remarks: review, rating, reviewerId: account, journalId: journal.id }))
   }
+
   return (
     <Paper elevation={0} variant="outlined" sx={{ mt: '2rem', p: '1rem' }}>
       <div style={{ padding: '1rem' }}>

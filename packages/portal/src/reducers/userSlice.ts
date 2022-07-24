@@ -26,31 +26,23 @@ export enum StatusEnum {
 
 // declaring the types for our state
 export type UserState = {
-  name: string;
-  status: Record<string, StatusEnum>;
-  price: number;
-  error: Record<string, string>;
   processingMetamask: boolean;
+  currentUser: any;
   account: string;
   balance: number;
   isMember: boolean;
   tokenId: number;
   modalForm: boolean;
-  profile: any;
 }
 
 const initialState: UserState = {
-  name: 'Hello world!',
-  status: {},
-  price: 0,
-  error: {},
   processingMetamask: false,
+  currentUser: null,
   account: '',
   balance: 0,
   isMember: false,
   tokenId: -1,
   modalForm: false,
-  profile: null,
 }
 
 export const persistConfig: Reducer.PersistConfig<UserState> = {
@@ -116,10 +108,14 @@ export const setAccount = createAsyncThunk(
 
 export const getProfile = createAsyncThunk(
   'user/getProfile',
-  async (id) => {
+  async (addr) => {
     try {
-      const response = await contractJGovNFT.methods.getProfile(id).call()
-      return response
+      const response = await contractJGovNFT.methods.getProfileByAddress(addr).call()
+      return {
+        name: response.name,
+        salutation: response.salutation,
+        accredition: response.accredition,
+      }
     } catch (e) {
       console.log(e)
     }
@@ -168,11 +164,6 @@ export const connect = createAsyncThunk(
   }
 )
 
-export const login = createAsyncThunk('user/login', async () => {
-  const response = await axios.get('https://api.coinstats.app/public/v1/coins/ethereum?currency=USD');
-  return response.data?.coin;
-})
-
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -180,23 +171,12 @@ export const userSlice = createSlice({
     setModalForm: (state, action: PayloadAction<boolean>) => {
       state.modalForm = action.payload;
     },
-    setName: (state, action: PayloadAction<string>) => {
-      state.name = action.payload
+    setCurrentUser: (state, action: PayloadAction<any>) => {
+      state.currentUser = action.payload;
     },
   },
   extraReducers: builder => {
     builder
-      .addCase(getPrice.pending, state => {
-        state.status = { ...state.status, getPrice: StatusEnum.Loading }
-      })
-      .addCase(getPrice.fulfilled, (state, { payload }) => {
-        state.status = { ...state.status, getPrice: StatusEnum.Idle }
-        state.price = payload?.price || 0
-      })
-      .addCase(getPrice.rejected, (state, { payload }: PayloadAction<any>) => {
-        state.status = { ...state.status, getPrice: StatusEnum.Error };
-        state.error = { ...state.error, [payload?.name]: payload?.message };
-      })
       .addCase(connect.pending, state => {
         state.processingMetamask = true
       })
@@ -220,13 +200,6 @@ export const userSlice = createSlice({
         state.tokenId = payload
         state.isMember = payload >= 0
       })
-      .addCase(getProfile.fulfilled, (state, { payload }: PayloadAction<any>) => {
-        state.profile = {
-          name: payload.name,
-          salutation: payload.salutation,
-          accredition: payload.accredition,
-        }
-      })
       .addCase(accountChanged.rejected, state => {
         console.log('accountChanged.rejected')
         state.account = ''
@@ -236,14 +209,6 @@ export const userSlice = createSlice({
   }
 })
 
-// Here we are just exporting the actions from this slice, so that we can call them anywhere in our app.
-export const {
-  setName,
-} = userSlice.actions
-
-// calling the above actions would be useless if we could not access the data in the state. So, we use something called a selector which allows us to select a value from the state.
-export const selectName = (state: RootState) => state.user.name
-export const selectPrice = (state: RootState) => state.user.price
 export const {
   setModalForm,
 } = userSlice.actions;

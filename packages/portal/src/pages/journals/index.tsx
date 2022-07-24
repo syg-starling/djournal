@@ -1,17 +1,17 @@
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { Paper, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, Modal, Typography, Card, CardHeader } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import DoneIcon from '@mui/icons-material/Done'
 import ClearIcon from '@mui/icons-material/Clear'
-import { RootState } from '~/src/store'
 
+import { RootState } from '~/src/store'
 import styles from '~/src/styles/Home.module.css'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import PageLayout from '../PageLayout'
 import { fetchJournals, setModalForm, StatusEnum } from '../../reducers/journalSlice'
 import CreateJournalForm from './form'
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
 
 const style = {
   position: 'absolute' as 'absolute',

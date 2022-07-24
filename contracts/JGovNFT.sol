@@ -139,7 +139,13 @@ contract JGovNFT is
         profile.accredition = accredition;
     }
 
-    function getProfile(uint256 id) public view returns(string memory name, string memory salutation, string memory accredition) {
+    function getProfileB(uint256 id) public view returns(string memory name, string memory salutation, string memory accredition) {
+        Profile storage profile = profiles[id];
+        return (profile.name, profile.salutation, profile.accredition);
+    }
+
+    function getProfileByAddress(address _addr) public view returns(string memory name, string memory salutation, string memory accredition) {
+        uint256 id = tokenOfOwnerByIndex(_addr, 0);
         Profile storage profile = profiles[id];
         return (profile.name, profile.salutation, profile.accredition);
     }

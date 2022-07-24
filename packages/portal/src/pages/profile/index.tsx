@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Button,
   Modal,
@@ -29,14 +29,19 @@ const style = {
 
 const Profile = () => {
   const dispatch = useAppDispatch()
-  const { modalForm, profile, tokenId, isMember } = useAppSelector((state: RootState) => state?.user)
+  const { modalForm, account, isMember } = useAppSelector((state: RootState) => state?.user)
+  const [profile, setProfile] = useState(null)
+
+  const fetchProfile = async (addr) => {
+    const res = await dispatch(getProfile(addr)).unwrap()
+    console.log(res)
+    setProfile(res)
+  }
 
   useEffect(() => {
-    console.log('useEffect Profile', tokenId)
-    if (!isMember || Number(tokenId) < 0) return
-    console.log('useEffect Profile DISPATCH', tokenId)
-    dispatch(getProfile(tokenId))
-  }, [tokenId, isMember])
+    if (!isMember) return
+    fetchProfile(account)
+  }, [account, isMember])
 
   return (
     <PageLayout>
