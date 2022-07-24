@@ -56,7 +56,7 @@ const NavBar = () => {
               size="small"
               sx={{ ml: 2 }}
             >
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              <Avatar alt="Profile" />
             </IconButton>
           </Tooltip>
           <Menu
