@@ -11,7 +11,4 @@ export class Journal extends BaseEntity {
     nullable: true,
   })
   data: Uint8Array;
-
-  @Column({ nullable: true })
-  address: string;
 }

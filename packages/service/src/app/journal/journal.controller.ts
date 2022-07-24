@@ -37,9 +37,9 @@ export class JournalController {
 
   @Post('/')
   @UseInterceptors(FileInterceptor('file'))
-  public async createJournal(@UploadedFile() file: any, @Body() body: any): Promise<Journal> {
+  public async createJournal(@UploadedFile() file: any): Promise<Journal> {
     //create smart contract for the bidding prior to journal creation
-    const journal = await this.journalService.createJournal({ fileName: file.originalName, data: file.buffer, address: body.address })
+    const journal = await this.journalService.createJournal({ fileName: file.originalName, data: file.buffer })
     return journal
   }
 }
