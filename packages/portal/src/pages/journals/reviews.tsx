@@ -13,6 +13,7 @@ const Reviews = ({ journal }: any) => {
   const [rating, setRating] = useState(0)
   const reviews = useAppSelector(selectReviews) || []
   const dispatch = useAppDispatch()
+  const isAuthor = account === journal.authorId
   const isReviewable = moment().isBefore(moment(journal.reviewClosedAt)) // indicate if the journal review deadline has been met
 
   const onReviewChange = (e: any) => {
@@ -44,9 +45,10 @@ const Reviews = ({ journal }: any) => {
                     name="rating"
                     value={rating}
                     onChange={onRatingChange}
+                    disabled={isAuthor}
                   />
                   <br />
-                  <TextField name="review" onChange={onReviewChange} value={review} fullWidth />
+                  <TextField name="review" onChange={onReviewChange} value={review} disabled={isAuthor} fullWidth />
                 </Grid>
                 <Grid item xs={2} style={{ padding: '1rem' }}>
                   <Button variant="contained" sx={{ ml: '1rem' }} onClick={onSubmitReview}>Submit</Button>

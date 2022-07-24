@@ -1,4 +1,5 @@
-import { IsBoolean, IsDateString, IsOptional, IsString, ValidateIf } from "class-validator"
+import { IsBoolean, IsDateString, IsEnum, IsOptional, IsString, ValidateIf } from "class-validator"
+import { ApproveStatus, ReviewStatus } from "./journal.enum"
 import { Journal } from "./journal.interface"
 
 export class UpdateJournalDto {
@@ -10,13 +11,21 @@ export class UpdateJournalDto {
   @IsString()
   yearPublished: string
 
-  @ValidateIf((o: Journal) => o?.reviewStarted)
+  @ValidateIf((o: Journal) => o?.reviewStatus === ReviewStatus.Started)
   @IsDateString()
   reviewClosedAt: string
 
   @IsOptional()
+  @IsEnum(ReviewStatus)
+  reviewStatus: ReviewStatus
+
+  @IsOptional()
+  @IsEnum(ApproveStatus)
+  approveStatus: ApproveStatus
+
+  @IsOptional()
   @IsBoolean()
-  reviewStarted: boolean
+  isPublished: boolean
 
   @IsOptional()
   bounty: number

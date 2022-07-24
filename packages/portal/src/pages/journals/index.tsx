@@ -32,10 +32,10 @@ const Journals: NextPage = () => {
   const { modalForm, list: rows, status } = useAppSelector((state: RootState) => state?.journal)
 
   useEffect(() => {
-    if (status.createJournalReview === StatusEnum.Idle) {
+    if (status.createJournal === StatusEnum.Idle) {
       dispatch(fetchJournals())
     }
-  }, [status.createJournalReview])
+  }, [status.createJournal])
 
   useEffect(() => {
     dispatch(fetchJournals())
@@ -90,7 +90,7 @@ const Journals: NextPage = () => {
                   </TableCell>
                   <TableCell align="center">{row.authorId}</TableCell>
                   <TableCell align="center">{row.yearPublished}</TableCell>
-                  <TableCell align="center">{row.reviewStarted ? <DoneIcon /> : <ClearIcon />}</TableCell>
+                  <TableCell align="center">{row.reviewStatus === 'NOT_STARTED' ? <ClearIcon /> : <DoneIcon />}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

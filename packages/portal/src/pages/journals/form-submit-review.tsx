@@ -46,7 +46,6 @@ const SubmitReviewForm = ({ journalId, onCloseForm }: any) => {
               field: { onChange, onBlur, ref },
             }) => (
               <TextField
-                type="number"
                 sx={{ margin: '5px' }}
                 label='Reward Amount'
                 onBlur={onBlur} // notify when input is touched

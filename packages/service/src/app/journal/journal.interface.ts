@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer'
 import { JournalReview } from '../journal-review/journal-review.entity'
 import { User } from '../user/user.interface'
+import { ApproveStatus, ReviewStatus } from './journal.enum'
 
 export class Journal {
   @Expose()
@@ -27,5 +28,14 @@ export class Journal {
   reviewClosedAt: string
 
   @Expose()
-  reviewStarted: boolean
+  reviewStatus: ReviewStatus
+
+  @Expose()
+  approveStatus: ApproveStatus
+
+  @Expose()
+  isPublished: boolean
+
+  @Expose()
+  bounty: number
 }

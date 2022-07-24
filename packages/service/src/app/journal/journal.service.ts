@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
-import { Journal } from './journal.entity'
+import { Journal } from './journal.interface'
 import { CreateJournalDto } from './create-journal.dto'
 import { User } from '../user/user.entity'
 import { UpdateJournalDto } from './update-journal.dto'

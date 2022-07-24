@@ -62,7 +62,7 @@ export const startReview = createAsyncThunk(
   async (payload) => {
     const response = await srv.updateJournal({
       id: payload.id,
-      reviewStarted: true,
+      reviewStatus: 'STARTED',
       reviewClosedAt: payload.reviewClosedAt,
       bounty: payload.bounty,
     })

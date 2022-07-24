@@ -9,15 +9,19 @@ import { useRouter } from 'next/router'
 import Reviews from './reviews'
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '~/src/hooks'
-import { fetchJournal, selectJournal } from '~/src/reducers/journalSlice'
+import { fetchJournal, selectJournal, selectStatus, StatusEnum } from '~/src/reducers/journalSlice'
 import SubmitReviewForm from './form-submit-review'
 import ModalForm from '~/src/components/formModal'
+import { RootState } from '~/src/store'
 
 const Journal: NextPage = () => {
   const router = useRouter()
   const journal = useAppSelector(selectJournal)
+  const status = useAppSelector(selectStatus)
   const dispatch = useAppDispatch()
+  const { account } = useAppSelector((state: RootState) => state.user)
   const [showForm, setModalForm] = useState(false)
+  const isAuthor = account === journal?.authorId
   const onClickBack = () => {
     router.push('/journals')
   }
@@ -31,6 +35,13 @@ const Journal: NextPage = () => {
   const onCloseModal = () => {
     setModalForm(false)
   }
+
+  useEffect(() => {
+    if (status.startReview === StatusEnum.Idle) {
+      const { id } = router.query
+      dispatch(fetchJournal(id))
+    }
+  }, [status.startReview])
 
   useEffect(() => {
     const { id } = router.query
@@ -59,26 +70,37 @@ const Journal: NextPage = () => {
 
         <Card>
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography gutterBottom variant="h4" component="div">
               {journal.journalName}
             </Typography>
             <Typography gutterBottom variant="body2" component="div">
               {journal.authorName} - Published in {journal.yearPublished}
             </Typography>
+            {
+              journal?.bounty && (
+                <Typography gutterBottom variant="body2" component="div">
+                  Review Award - {journal?.bounty} (MATIC)
+                </Typography>
+              )
+            }
             <Typography variant="subtitle1" color="text.secondary">
               {journal.details}
             </Typography>
           </CardContent>
           <CardActions>
             {
-              !journal.reviewStarted &&
+              journal?.reviewStatus === 'NOT_STARTED' &&
               <Button size="small" color="info" onClick={onClickSubmitReview}>
                 Submit for Review
               </Button>
             }
-            <Button size="small" color="inherit" onClick={onClickSubmitApproval}>
-              Submit for Approval
-            </Button>
+            {
+              isAuthor && journal?.approveStatus === 'NOT_STARTED' && (
+                <Button size="small" color="inherit" onClick={onClickSubmitApproval}>
+                  Submit for Approval
+                </Button>
+              )
+            }
           </CardActions>
         </Card>
         <Reviews journal={journal} />
