@@ -6,7 +6,6 @@ export class CreateJournalDto {
   data: Uint8Array
 
   @IsNotEmpty()
-  @IsUUID()
   @IsString()
   authorId: string
 

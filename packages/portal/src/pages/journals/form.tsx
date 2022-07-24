@@ -1,17 +1,19 @@
 import { Button, CardHeader, Divider, TextField } from '@mui/material'
 import { watch } from 'fs'
 import { Controller, useForm } from 'react-hook-form'
-import { useAppDispatch } from '~/src/hooks'
+import { useAppDispatch, useAppSelector } from '~/src/hooks'
 import journalSlice, { createJournal, setModalForm } from '~/src/reducers/journalSlice'
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const CreateJournalForm = () => {
     const dispatch = useAppDispatch()
+    const { account } = useAppSelector((state: RootState) => state.user)
 
     const { control, handleSubmit: handleFormSubmit, register, watch, getValues, reset } = useForm({ defaultValues: { journalName: null, yearPublished: null, file: null, authorId: null } })
 
     const handleSubmit = (values: any) => {
         values.file = values.file[0]
+        values.authorId = account
         try {
             dispatch(createJournal(values))
             reset({})

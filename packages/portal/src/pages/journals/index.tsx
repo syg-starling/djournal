@@ -6,8 +6,9 @@ import { RootState } from '~/src/store'
 import styles from '~/src/styles/Home.module.css'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import PageLayout from '../PageLayout'
-import { setModalForm } from '../../reducers/journalSlice'
+import { fetchJournals, setModalForm } from '../../reducers/journalSlice'
 import CreateJournalForm from './form'
+import { useEffect } from 'react'
 const columns = [
   { field: 'journalName', headerName: 'Journal Title', width: 70 },
   { field: 'authorName', headerName: 'Author', width: 70 },
@@ -35,8 +36,11 @@ const style = {
 
 const Journals: NextPage = () => {
   const dispatch = useAppDispatch()
-  const { modalForm } = useAppSelector((state: RootState) => state?.journal)
+  const { modalForm, list: rows } = useAppSelector((state: RootState) => state?.journal)
 
+  useEffect(() => {
+    dispatch(fetchJournals())
+  }, [])
   return (
     <PageLayout>
       <div className={styles.container}>
