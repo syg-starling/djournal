@@ -4,9 +4,9 @@ import {
   createSlice,
   PayloadAction,
   createAsyncThunk,
-} from '@reduxjs/toolkit'
+} from '@reduxjs/toolkit';
+import { getJournal, getJournals, postJournal } from '../services/journal';
 
-import { getJournals } from '../services/journal'
 import { Journal } from '../../../service/src/app/journal/journal.interface'
 import { RootState } from '../store';
 
@@ -43,8 +43,8 @@ export const fetchJournals = createAsyncThunk(
 
 export const fetchJournal = createAsyncThunk(
   'journal/getJournal',
-  async (params) => {
-    const response = await getJournals(params)
+  async (id: string) => {
+    const response = await getJournal({ id })
     return response.data;
   }
 );

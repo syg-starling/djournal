@@ -21,12 +21,6 @@ import { FileInterceptor } from '@nestjs/platform-express'
 export class JournalController {
   constructor(private readonly journalService: JournalService) { }
 
-  @Get('/')
-  public async getJournals(): Promise<Journal[]> {
-    const journals = await this.journalService.getJournals()
-    return journals
-  }
-
   @Get('/:id')
   public async getJournal(@Param('id', ParseUUIDPipe) id: string): Promise<Journal> {
     const journal = await this.journalService.getJournal(id)
@@ -34,6 +28,12 @@ export class JournalController {
       throw new NotFoundException()
     }
     return journal
+  }
+
+  @Get('/')
+  public async getJournals(): Promise<Journal[]> {
+    const journals = await this.journalService.getJournals()
+    return journals
   }
 
   @Post('/')
