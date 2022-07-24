@@ -27,4 +27,4 @@ const testMintGovNFT = async (address) => {
   console.log('mintGovNFT')
   console.log(txMint)
 }
-testMintGovNFT('0x705e411e40D50579546275458F785514A0B7196a').then(process.exit)
+testMintGovNFT('0x9f33D292259bd9A8751932D2aa193Bb0c29d8328').then(process.exit)

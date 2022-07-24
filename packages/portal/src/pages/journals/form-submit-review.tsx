@@ -52,7 +52,7 @@ const SubmitReviewForm = ({ journalId, onCloseForm }: any) => {
                 onChange={onChange} // send value to hook form
                 inputRef={ref}
                 InputProps={{
-                  endAdornment: <InputAdornment position="end">MATIC</InputAdornment>,
+                  endAdornment: <InputAdornment position="end">JTOK</InputAdornment>,
                 }}
               />
             )}

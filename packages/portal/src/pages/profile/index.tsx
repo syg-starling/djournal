@@ -39,7 +39,7 @@ const Profile = () => {
   }
 
   const approveTokenClick = async () => {
-    const res = await dispatch(approveToken(account)).unwrap()
+    const res = await dispatch(approveToken()).unwrap()
     console.log(res)
   }
 

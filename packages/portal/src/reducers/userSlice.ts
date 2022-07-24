@@ -19,6 +19,9 @@ import {
   MAX_APPROVAL_VALUE,
 } from '../utils/web3'
 
+const jReviewAddr = process.env.NEXT_PUBLIC_JREVIEW_ADDR
+const journalAddr = process.env.NEXT_PUBLIC_JOURNAL_ADDR
+
 export enum StatusEnum {
   Idle = 'IDLE',
   Loading = 'LOADING',
@@ -88,11 +91,19 @@ export const getBalance = createAsyncThunk(
 
 export const approveToken = createAsyncThunk(
   'user/approveToken',
-  async (addr: string, { getState}) => {
+  async (_, { getState}) => {
   try {
     const { user } = getState()
     await contractToken.methods.approve(
-      addr,
+      jReviewAddr,
+      MAX_APPROVAL_VALUE,
+    ).send({
+      from: user.account,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT,
+    })
+    await contractToken.methods.approve(
+      journalAddr,
       MAX_APPROVAL_VALUE,
     ).send({
       from: user.account,

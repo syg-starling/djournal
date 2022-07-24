@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+const Big = require('big.js')
 import {
   createSlice,
   PayloadAction,
@@ -9,7 +10,7 @@ import * as srv from '../services/journal';
 
 import { Journal } from '../../../service/src/app/journal/journal.interface'
 import { RootState } from '../store';
-import { contractJReview, GAS_LIMIT, GAS_PRICE } from '../utils/web3';
+import { contractJReview, GAS_LIMIT, GAS_PRICE, WEI } from '../utils/web3'
 
 export enum StatusEnum {
   Idle = 'IDLE',
@@ -64,7 +65,8 @@ export const startReview = createAsyncThunk(
     const { user } = getState()
     console.log({ payload })
     try {
-      let response = await contractJReview.methods.submitApplication(payload.id, payload.bounty).send({
+      const bounty = new Big(payload.bounty).times(WEI).toFixed(0)
+      let response = await contractJReview.methods.submitApplication(payload.id, bounty).send({
         from: user.account,
         gasPrice: GAS_PRICE,
         gasLimit: GAS_LIMIT,

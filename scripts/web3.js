@@ -8,6 +8,7 @@ const {
   GAS_PRICE,
 } = require('../helper')
 
+const jTokenABI = require('../packages/contract/abi/JToken.json')
 const contractRolesABI = require('../packages/contract/abi/ContractRoles.json')
 const jGovNFTABI = require('../packages/contract/abi/JGovNFT.json')
 
@@ -23,6 +24,7 @@ const masterAccount = web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_
 web3.eth.accounts.wallet.add(masterAccount)
 web3.eth.defaultAccount = masterAccount.address
 
+const contractToken = new web3.eth.Contract(jTokenABI.abi, tokenAddr)
 const contractRoles = new web3.eth.Contract(contractRolesABI.abi, contractRolesAddr)
 const contractJGovNFT = new web3.eth.Contract(jGovNFTABI.abi, jGovNFTAddr)
 
@@ -73,6 +75,21 @@ module.exports.hasRole = async (role, address) => {
 }
 
 module.exports.mintGovNFT = async (address) => {
+  if (!contractJGovNFT) return
+  try {
+    const response = await contractJGovNFT.methods.safeMint(address, '').send({
+      from: masterAccount.address,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT,
+    })
+    return response
+  } catch (err) {
+    console.log('Error mintGovNFT', err)
+    throw err
+  }
+}
+
+module.exports.mintToken = async (address) => {
   if (!contractJGovNFT) return
   try {
     const response = await contractJGovNFT.methods.safeMint(address, '').send({

@@ -55,20 +55,20 @@ contract JReview is ContextUpgradeable {
             "Insufficient J Token balance"
         );
 
-        jToken.transferFrom(_msgSender(), address(this), bounty);
+        if (bounty > 0) {
+            jToken.transferFrom(submitter, address(this), bounty);
+        }
 
         uint256 id = _idCounter.current();
         _idCounter.increment();
 
         // save the application
-        reviews[submitter][id] = ReviewApplication(
-            id,
-            journalId,
-            bounty,
-            new address[](MAX_REVIEWS),
-            0,
-            ReviewStatus.SUBMITTED
-        );
+        ReviewApplication storage application = reviews[submitter][id];
+        application.id = id;
+        application.journalId = journalId;
+        application.bounty = bounty;
+        application.reviewerCount = 0;
+        application.status = ReviewStatus.SUBMITTED;
 
         submitters[id] = submitter;
         return id;
