@@ -19,7 +19,7 @@ async function main() {
 
     if (deployerBalance === '0') return // deployment will fail
 
-    const journalContract = await ethers.getContractFactory('JouralContract')
+    const journalContract = await ethers.getContractFactory('JournalContract')
     const contract = await upgrades.deployProxy(journalContract, [
         jReviewAddr,
         jgovnftAddr,

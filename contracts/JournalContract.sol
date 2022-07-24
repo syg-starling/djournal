@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "./JReview.sol";
 
-contract JouralContract is ContextUpgradeable {
+contract JournalContract is ContextUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter private _journalIdCounter;
     uint8 constant MAX_APPROVERS = 100;

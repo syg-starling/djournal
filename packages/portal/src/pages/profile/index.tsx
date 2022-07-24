@@ -8,7 +8,7 @@ import {
 
 import { RootState } from '~/src/store'
 import { useAppDispatch, useAppSelector } from '~/src/hooks'
-import { getProfile, setModalForm } from '~/src/reducers/userSlice'
+import { getProfile, setModalForm, approveToken } from '~/src/reducers/userSlice'
 
 import PageLayout from "../PageLayout"
 
@@ -38,6 +38,11 @@ const Profile = () => {
     setProfile(res)
   }
 
+  const approveTokenClick = async () => {
+    const res = await dispatch(approveToken(addr)).unwrap()
+    console.log(res)
+  }
+
   useEffect(() => {
     if (!isMember) return
     fetchProfile(account)
@@ -51,6 +56,9 @@ const Profile = () => {
         </Typography>
         <Button onClick={() => { dispatch(setModalForm(true)) }}>
           Edit
+        </Button>
+        <Button onClick={approveTokenClick}>
+          Approve
         </Button>
         {profile ? (
           <div>

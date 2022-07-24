@@ -16,6 +16,7 @@ import {
   WEI,
   GAS_LIMIT,
   GAS_PRICE,
+  MAX_APPROVAL_VALUE,
 } from '../utils/web3'
 
 export enum StatusEnum {
@@ -84,6 +85,24 @@ export const getBalance = createAsyncThunk(
     return Number(balance)
   },
 )
+
+export const approveToken = createAsyncThunk(
+  'user/approveToken',
+  async (addr: string, { getState}) => {
+  try {
+    const { user } = getState()
+    await contractToken.methods.approve(
+      addr,
+      MAX_APPROVAL_VALUE,
+    ).send({
+      from: user.account,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT,
+    })
+  } catch (err) {
+    console.log(err)
+  }
+})
 
 export const checkMember = createAsyncThunk(
   'user/checkMember',
