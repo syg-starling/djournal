@@ -30,6 +30,15 @@ contract JGovNFT is
     CountersUpgradeable.Counter private _tokenIdCounter;
     IRoles private rolesContract;
 
+    struct Profile {
+        string name;
+        string salutation;
+        string accredition;
+        mapping(string => uint256) specialties;
+    }
+
+    mapping(uint256 => Profile) public profiles;
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -119,5 +128,19 @@ contract JGovNFT is
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    function setProfile(uint256 id, string memory name, string memory salutation, string memory accredition) public {
+        require(ownerOf(id) == _msgSender() || rolesContract.isAdmin(_msgSender()), "401");
+
+        Profile storage profile = profiles[id];
+        profile.name = name;
+        profile.salutation = salutation;
+        profile.accredition = accredition;
+    }
+
+    function getProfile(uint256 id) public view returns(string memory name, string memory salutation, string memory accredition) {
+        Profile storage profile = profiles[id];
+        return (profile.name, profile.salutation, profile.accredition);
     }
 }

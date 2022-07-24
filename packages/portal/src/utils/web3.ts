@@ -42,5 +42,5 @@ export const contractJReview = _contractJReview
 
 export const WEI = new Big(10).pow(18)
 export const GAS_LIMIT = 345577
-export const GAS_PRICE = new Big(10).pow(9).times(30).toFixed(0)
+export const GAS_PRICE = new Big(10).pow(9).times(32).toFixed(0)
 export const MAX_APPROVAL_VALUE = '115792089237316200000000000000000000000000000000000000000000'

@@ -14,6 +14,8 @@ import {
   contractToken,
   contractJGovNFT,
   WEI,
+  GAS_LIMIT,
+  GAS_PRICE,
 } from '../utils/web3'
 
 export enum StatusEnum {
@@ -32,6 +34,9 @@ export type UserState = {
   account: string;
   balance: number;
   isMember: boolean;
+  tokenId: number;
+  modalForm: boolean;
+  profile: any;
 }
 
 const initialState: UserState = {
@@ -43,6 +48,9 @@ const initialState: UserState = {
   account: '',
   balance: 0,
   isMember: false,
+  tokenId: -1,
+  modalForm: false,
+  profile: null,
 }
 
 export const persistConfig: Reducer.PersistConfig<UserState> = {
@@ -89,7 +97,11 @@ export const checkMember = createAsyncThunk(
   'user/checkMember',
   async (account: string) => {
     const tokenBalance = await contractJGovNFT.methods.balanceOf(account).call()
-    return (tokenBalance !== '0')
+    if (tokenBalance !== '0') {
+      const tokenId = await contractJGovNFT.methods.tokenOfOwnerByIndex(account, 0).call()
+      return tokenId
+    }
+    return -1
   },
 )
 
@@ -99,6 +111,36 @@ export const setAccount = createAsyncThunk(
     await dispatch(checkMember(account))
     await dispatch(getBalance(account))
     return account ? account.toLocaleLowerCase() : ''
+  },
+)
+
+export const getProfile = createAsyncThunk(
+  'user/getProfile',
+  async (id) => {
+    try {
+      const response = await contractJGovNFT.methods.getProfile(id).call()
+      return response
+    } catch (e) {
+      console.log(e)
+    }
+  },
+)
+
+export const setProfile = createAsyncThunk(
+  'user/setProfile',
+  async ({ id, name, salutation, accredition }: any, { getState }) => {
+    try {
+      const { user } = getState()
+      console.log('id, name, salutation, accredition', id, name, salutation, accredition)
+      const response = await contractJGovNFT.methods.setProfile(id, name, salutation, accredition).send({
+        from: user.account,
+        gasPrice: GAS_PRICE,
+        gasLimit: GAS_LIMIT,
+      })
+      return response
+    } catch (e) {
+      console.log(e)
+    }
   },
 )
 
@@ -135,6 +177,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setModalForm: (state, action: PayloadAction<boolean>) => {
+      state.modalForm = action.payload;
+    },
     setName: (state, action: PayloadAction<string>) => {
       state.name = action.payload
     },
@@ -171,8 +216,16 @@ export const userSlice = createSlice({
         state.balance = payload
       })
       .addCase(checkMember.fulfilled, (state, { payload }: PayloadAction<any>) => {
-        console.log('isMember', payload)
-        state.isMember = payload
+        console.log('tokenId', payload)
+        state.tokenId = payload
+        state.isMember = payload >= 0
+      })
+      .addCase(getProfile.fulfilled, (state, { payload }: PayloadAction<any>) => {
+        state.profile = {
+          name: payload.name,
+          salutation: payload.salutation,
+          accredition: payload.accredition,
+        }
       })
       .addCase(accountChanged.rejected, state => {
         console.log('accountChanged.rejected')
@@ -191,6 +244,9 @@ export const {
 // calling the above actions would be useless if we could not access the data in the state. So, we use something called a selector which allows us to select a value from the state.
 export const selectName = (state: RootState) => state.user.name
 export const selectPrice = (state: RootState) => state.user.price
+export const {
+  setModalForm,
+} = userSlice.actions;
 
 // exporting the reducer here, as we need to add this to the store
 export default userSlice.reducer
