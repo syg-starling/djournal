@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Nolicense
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol';
 
 contract JReview is ContextUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
@@ -21,7 +21,7 @@ contract JReview is ContextUpgradeable {
     }
     struct ReviewApplication {
         uint256 id;
-        string journalUuid;
+        uint256 journalId;
         uint256 bounty;
         address[] reviewers;
         uint8 reviewerCount;
@@ -34,22 +34,25 @@ contract JReview is ContextUpgradeable {
     // map of submitter to map of review_id to application
     mapping(address => mapping(uint256 => ReviewApplication)) public reviews;
 
-    function initialize(address _govTokenAddress, address _jTokenAddress) public initializer {
+    function initialize(address _govTokenAddress, address _jTokenAddress)
+        public
+        initializer
+    {
         govToken = IERC721Upgradeable(_govTokenAddress);
         jToken = IERC20Upgradeable(_jTokenAddress);
     }
 
-    function submitApplication(
-        string memory journalUuid,
-        uint256 bounty
-    ) public returns(uint256) {
+    function submitApplication(uint256 journalId, uint256 bounty)
+        public
+        returns (uint256)
+    {
         // get the submitter address
         address submitter = _msgSender();
 
         // check if the bounty is greater than balance
         require(
             jToken.balanceOf(submitter) >= bounty,
-            "Insufficient J Token balance"
+            'Insufficient J Token balance'
         );
 
         jToken.transferFrom(_msgSender(), address(this), bounty);
@@ -60,7 +63,7 @@ contract JReview is ContextUpgradeable {
         // save the application
         reviews[submitter][id] = ReviewApplication(
             id,
-            journalUuid,
+            journalId,
             bounty,
             new address[](MAX_REVIEWS),
             0,
@@ -76,12 +79,12 @@ contract JReview is ContextUpgradeable {
         address reviewer = _msgSender();
 
         // check if the reviewer holds the NFT
-        require(govToken.balanceOf(reviewer) > 0, "Uauthorized reviewer");
+        require(govToken.balanceOf(reviewer) > 0, 'Uauthorized reviewer');
 
         address submitter = submitters[id];
 
         // check if the publisher address exists
-        require(submitter != address(0), "Invalid application id");
+        require(submitter != address(0), 'Invalid application id');
 
         // add the reviewer to the application
         reviews[submitter][id].reviewers.push(reviewer);
@@ -92,16 +95,13 @@ contract JReview is ContextUpgradeable {
         address submitter = submitters[id];
 
         // check if the application exists
-        require(submitter != address(0), "Invalid application id");
+        require(submitter != address(0), 'Invalid application id');
 
         // check if the submitter is the same as the sender
-        require(_msgSender() == submitter, "Unauthorized to release bounty");
+        require(_msgSender() == submitter, 'Unauthorized to release bounty');
 
         // check if there are any reviews
-        require(
-            reviews[submitter][id].reviewerCount > 0,
-            "No reviewers found"
-        );
+        require(reviews[submitter][id].reviewerCount > 0, 'No reviewers found');
 
         // if there is any bounty, release it
         if (reviews[submitter][id].bounty > 0) {
@@ -121,5 +121,17 @@ contract JReview is ContextUpgradeable {
 
         // update the status of the applicatio
         reviews[submitter][id].status = ReviewStatus.REVIEWED;
+    }
+
+    function getApplication(uint256 id)
+        public
+        view
+        returns (ReviewApplication memory)
+    {
+        address submitter = submitters[id];
+
+        // check if the application exists
+        require(submitter != address(0), 'Invalid application id');
+        return reviews[submitter][id];
     }
 }

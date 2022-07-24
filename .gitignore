@@ -23,3 +23,6 @@ artifacts
 .openzeppelin
 dist
 build
+
+# MacOS
+.DS_Store
