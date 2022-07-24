@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Nolicense
 pragma solidity ^0.8.0;
 
 interface IRoles

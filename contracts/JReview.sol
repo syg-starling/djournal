@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: Nolicense
 pragma solidity ^0.8.4;
 
-import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/utils/Context.sol';
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-contract JReview is Context {
-    IERC721Upgradeable private immutable govToken;
-    IERC20 private immutable jToken;
-    uint256 constant maxReviews = 100;
+contract JReview is ContextUpgradeable {
+    using CountersUpgradeable for CountersUpgradeable.Counter;
 
-    constructor(IERC721Upgradeable govTokenAddress, IERC20 jTokenAddress) {
-        govToken = govTokenAddress;
-        jToken = jTokenAddress;
-    }
+    CountersUpgradeable.Counter private _idCounter;
+
+    IERC721Upgradeable public govToken;
+    IERC20Upgradeable public jToken;
+    uint256 private constant MAX_REVIEWS = 100;
 
     enum ReviewStatus {
         SUBMITTED,
         REVIEWED
     }
     struct ReviewApplication {
-        string applicationUuid;
+        uint256 id;
         string journalUuid;
         uint256 bounty;
         address[] reviewers;
@@ -29,90 +29,97 @@ contract JReview is Context {
     }
 
     // map of review_id to submitter
-    mapping(string => address) _submitter;
+    mapping(uint256 => address) public submitters;
 
     // map of submitter to map of review_id to application
-    mapping(address => mapping(string => ReviewApplication)) _reviews;
+    mapping(address => mapping(uint256 => ReviewApplication)) public reviews;
+
+    function initialize(address _govTokenAddress, address _jTokenAddress) public initializer {
+        govToken = IERC721Upgradeable(_govTokenAddress);
+        jToken = IERC20Upgradeable(_jTokenAddress);
+    }
 
     function submitApplication(
-        string memory applicationUuid,
-        uint256 bounty,
-        string memory journalUuid
-    ) public {
+        string memory journalUuid,
+        uint256 bounty
+    ) public returns(uint256) {
         // get the submitter address
         address submitter = _msgSender();
 
         // check if the bounty is greater than balance
         require(
             jToken.balanceOf(submitter) >= bounty,
-            'Insufficient J Token balance'
+            "Insufficient J Token balance"
         );
 
         jToken.transferFrom(_msgSender(), address(this), bounty);
 
+        uint256 id = _idCounter.current();
+        _idCounter.increment();
+
         // save the application
-        _reviews[submitter][applicationUuid] = ReviewApplication(
-            applicationUuid,
+        reviews[submitter][id] = ReviewApplication(
+            id,
             journalUuid,
             bounty,
-            new address[](maxReviews),
+            new address[](MAX_REVIEWS),
             0,
             ReviewStatus.SUBMITTED
         );
 
-        _submitter[applicationUuid] = submitter;
+        submitters[id] = submitter;
+        return id;
     }
 
-    function submitReview(string memory applicationUuid) public {
+    function submitReview(uint256 id) public {
         // get the reviewer address
         address reviewer = _msgSender();
 
         // check if the reviewer holds the NFT
-        require(govToken.balanceOf(reviewer) > 0, 'Uauthorized reviewer');
+        require(govToken.balanceOf(reviewer) > 0, "Uauthorized reviewer");
 
-        address submitter = _submitter[applicationUuid];
+        address submitter = submitters[id];
 
         // check if the publisher address exists
-        require(submitter != address(0), 'Invalid application id');
+        require(submitter != address(0), "Invalid application id");
 
         // add the reviewer to the application
-        _reviews[submitter][applicationUuid].reviewers.push(reviewer);
-        _reviews[submitter][applicationUuid].reviewerCount++;
+        reviews[submitter][id].reviewers.push(reviewer);
+        reviews[submitter][id].reviewerCount++;
     }
 
-    function releaseBounty(string memory applicationUuid) public {
-        address submitter = _submitter[applicationUuid];
+    function releaseBounty(uint256 id) public {
+        address submitter = submitters[id];
 
         // check if the application exists
-        require(submitter != address(0), 'Invalid application id');
+        require(submitter != address(0), "Invalid application id");
 
         // check if the submitter is the same as the sender
-        require(_msgSender() == submitter, 'Unauthorized to release bounty');
+        require(_msgSender() == submitter, "Unauthorized to release bounty");
 
         // check if there are any reviews
         require(
-            _reviews[submitter][applicationUuid].reviewerCount > 0,
-            'No reviewers found'
+            reviews[submitter][id].reviewerCount > 0,
+            "No reviewers found"
         );
 
         // if there is any bounty, release it
-        if (_reviews[submitter][applicationUuid].bounty > 0) {
-            uint256 amountToPay = _reviews[submitter][applicationUuid].bounty /
-                _reviews[submitter][applicationUuid].reviewerCount;
+        if (reviews[submitter][id].bounty > 0) {
+            uint256 amountToPay = reviews[submitter][id].bounty /
+                reviews[submitter][id].reviewerCount;
             uint256 counter = 0;
 
             for (
                 counter = 0;
-                counter < _reviews[submitter][applicationUuid].reviewerCount;
+                counter < reviews[submitter][id].reviewerCount;
                 counter++
             ) {
-                address reviewer = _reviews[submitter][applicationUuid]
-                    .reviewers[counter];
+                address reviewer = reviews[submitter][id].reviewers[counter];
                 jToken.transfer(reviewer, amountToPay);
             }
         }
 
         // update the status of the applicatio
-        _reviews[submitter][applicationUuid].status = ReviewStatus.REVIEWED;
+        reviews[submitter][id].status = ReviewStatus.REVIEWED;
     }
 }

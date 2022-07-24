@@ -6,7 +6,8 @@
 require('dotenv').config({ path: '../.env' })
 const { ethers, upgrades } = require('hardhat')
 
-const contractAddr = process.env.JGOVNFT_ADDR
+const tokenAddr = process.env.TOKEN_ADDR
+const jgovnftAddr = process.env.CONTRACT_JGOVNFT_ADDR
 
 async function main() {
   const [deployer] = await ethers.getSigners()
@@ -17,13 +18,15 @@ async function main() {
 
   if (deployerBalance === '0') return // deployment will fail
 
-  const JGovNFT = await ethers.getContractFactory('JGovNFT')
-  const upgradedContract = await upgrades.upgradeProxy(
-    contractAddr,
-    JGovNFT,
-  )
+  const JReview = await ethers.getContractFactory('JReview')
+  const contract = await upgrades.deployProxy(JReview, [
+    jgovnftAddr,
+    tokenAddr,
+  ])
+  await contract.deployed()
 
-  console.log('contract upgraded addr:', upgradedContract.address)
+  console.log('JReview deployed to:', contract.address)
+  console.log('JReview details:', contract)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
