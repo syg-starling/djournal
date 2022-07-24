@@ -9,10 +9,12 @@ const {
 } = require('../helper')
 
 const contractRolesABI = require('../packages/contract/abi/ContractRoles.json')
+const jGovNFTABI = require('../packages/contract/abi/JGovNFT.json')
 
 const rpcUrl = process.env.RPC_URL
 const tokenAddr = process.env.TOKEN_ADDR
 const contractRolesAddr = process.env.CONTRACT_ROLES_ADDR
+const jGovNFTAddr = process.env.JGOVNFT_ADDR
 
 const web3Provider = new Web3.providers.HttpProvider(rpcUrl)
 const web3 = new Web3(web3Provider)
@@ -22,8 +24,10 @@ web3.eth.accounts.wallet.add(masterAccount)
 web3.eth.defaultAccount = masterAccount.address
 
 const contractRoles = new web3.eth.Contract(contractRolesABI.abi, contractRolesAddr)
+const contractJGovNFT = new web3.eth.Contract(jGovNFTABI.abi, jGovNFTAddr)
 
 console.log('CONTRACT_ROLES_ADDR', contractRolesAddr)
+console.log('JGOVNFT_ADDR', jGovNFTAddr)
 
 const getRole = async (role) => {
   if (!contractRoles) return
@@ -64,6 +68,21 @@ module.exports.hasRole = async (role, address) => {
     return response
   } catch (err) {
     console.log('Error hasRole', err)
+    throw err
+  }
+}
+
+module.exports.mintGovNFT = async (address) => {
+  if (!contractJGovNFT) return
+  try {
+    const response = await contractJGovNFT.methods.safeMint(address, '').send({
+      from: masterAccount.address,
+      gasPrice: GAS_PRICE,
+      gasLimit: GAS_LIMIT,
+    })
+    return response
+  } catch (err) {
+    console.log('Error mintGovNFT', err)
     throw err
   }
 }
