@@ -23,7 +23,7 @@ const setupApp = (
   console.log('cors', configService.get('CORS_ORIGIN'))
   if (configService.get('CORS_ORIGIN')) {
     app.enableCors({
-      origin: 'https://serverasc4dxre-dev-machine-server-5000.morpheuslabs.io',
+      origin: configService.get('CORS_ORIGIN'),
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       allowedHeaders: [
         'Accept',
