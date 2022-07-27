@@ -8,9 +8,8 @@ import {
 import axios from 'axios'
 import Big from 'big.js'
 
-import type { RootState } from '../store'
-import { 
-  web3, 
+import {
+  web3,
   contractToken,
   contractJGovNFT,
   WEI,
@@ -171,7 +170,7 @@ export const setProfile = createAsyncThunk(
 )
 
 export const connect = createAsyncThunk(
-  'user/connect', 
+  'user/connect',
   async (_, { dispatch }) => {
     web3.currentProvider.on('accountsChanged', async (e) => {
       try {

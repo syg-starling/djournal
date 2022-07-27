@@ -9,7 +9,7 @@ export const postJournal = (payload: Partial<Journal>) => {
     formData.append(k, v)
   })
 
-    return api.post('/journals', formData)
+  return api.post('/journals', formData)
 }
 export const updateJournal = (payload: Partial<Journal>) => {
   return api.put(`/journals/${payload.id}`, payload)

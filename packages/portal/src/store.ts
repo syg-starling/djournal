@@ -2,6 +2,7 @@ import {
   Action,
   ThunkAction,
 } from '@reduxjs/toolkit'
+
 import { persistStore } from 'redux-persist'
 
 import configureAppStore from './configure-store'
