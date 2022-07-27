@@ -72,7 +72,7 @@ export const startReview = createAsyncThunk(
         gasLimit: GAS_LIMIT,
       })
       console.log({ response })
-      if (response.ok)
+      if (response)
         response = await srv.updateJournal({
           id: payload.id,
           reviewStatus: 'STARTED',

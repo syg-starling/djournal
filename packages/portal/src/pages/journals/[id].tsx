@@ -32,7 +32,8 @@ const Journal: NextPage = () => {
   }
 
   const onClickSubmitApproval = () => {
-    dispatch(startApproval(journalId))
+    const { id } = router.query
+    dispatch(startApproval(id))
   }
 
   const onCloseModal = () => {

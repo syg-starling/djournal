@@ -37,7 +37,6 @@ export class ConfigDto {
 
   @Type(() => Number)
   @IsOptional()
-  @IsNumber()
   POSTGRES_PORT: number
 
   @IsString()

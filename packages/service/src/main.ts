@@ -20,12 +20,28 @@ const setupApp = (
   configService: ConfigService,
 ) => {
   app.useLogger(app.get(Logger))
-
+  console.log('cors', configService.get('CORS_ORIGIN'))
   if (configService.get('CORS_ORIGIN')) {
     app.enableCors({
-      origin: configService.get('CORS_ORIGIN'),
+      origin: 'https://serverasc4dxre-dev-machine-server-5000.morpheuslabs.io',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      allowedHeaders: [
+        'Accept',
+        'Accept-Encoding',
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Credentials',
+        'Access-Control-Expose-Headers',
+        'Authorization',
+        'Cache-Control',
+        'Content-Type',
+        'Content-Disposition',
+        'Origin',
+        'X-Requested-With',
+        'X-Authorization-Type',
+      ],
+      preflightContinue: false,
       credentials: true,
-      optionsSuccessStatus: 200,
+      optionsSuccessStatus: 204,
     })
   }
 
