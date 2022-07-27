@@ -10,7 +10,7 @@ const Reviews = ({ journal }: any) => {
   const currentUser = useAppSelector(selectCurrentUser)
   const [review, setReview] = useState('')
   const [rating, setRating] = useState(0)
-  const reviews = useAppSelector(selectReviews)
+  const reviews = useAppSelector(selectReviews) || []
   const dispatch = useAppDispatch()
   const isReviewable = moment().isBefore(moment(journal.reviewClosedAt)) // indicate if the journal review deadline has been met
 

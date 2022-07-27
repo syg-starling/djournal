@@ -5,6 +5,7 @@ import { PersistPartial } from "redux-persist/es/persistReducer"
 
 import journal from "./journalSlice"
 import user, { persistConfig as userPersistConfig } from "./userSlice"
+import journalReview from './journalReviewSlice'
 
 const persisted = <T>(reducer: ReduxReducer<T>, persistConfig: Reducer.PersistConfig<T>): ReduxReducer<T & PersistPartial> => {
   return persistReducer({ ...persistConfig, storage }, reducer)
@@ -13,6 +14,7 @@ const persisted = <T>(reducer: ReduxReducer<T>, persistConfig: Reducer.PersistCo
 const rootReducer = combineReducers({
   journal,
   user: persisted(user, userPersistConfig),
+  journalReview,
 })
 
 export default rootReducer

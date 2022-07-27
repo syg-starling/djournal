@@ -100,7 +100,7 @@ export const {
 } = journalReviewSlice.actions;
 
 // calling the above actions would be useless if we could not access the data in the state. So, we use something called a selector which allows us to select a value from the state.
-export const selectReviews = (state: RootState) => state.journalReview.list
+export const selectReviews = (state: RootState) => state.journalReview?.list
 
 // exporting the reducer here, as we need to add this to the store
 export default journalReviewSlice.reducer;
